@@ -1,36 +1,26 @@
 package lk.ac.iit.EventTicketingSystem;
 
-import lk.ac.iit.EventTicketingSystem.configuration.Configuration;
-import org.springframework.boot.SpringApplication;
+import lk.ac.iit.EventTicketingSystem.models.Vendor;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Scanner;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @SpringBootApplication
 @RestController
 public class EventTicketingSystemApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
-		Scanner input = new Scanner(System.in);
+		Configuration config = new Configuration();
+		Configuration.loadConfiguration(config);
 
-		System.out.println("Welcome to the Real-Time Event Ticketing System!");
 
-		System.out.print("Enter total tickets: ");
-		int totalTickets = input.nextInt();
-		System.out.print("Enter ticket release rate: ");
-		int ticketReleaseRate = input.nextInt();
-		System.out.print("Enter customer retrieval rate: ");
-		int customerRetrievalRate = input.nextInt();
-		System.out.print("Enter max ticket capacity: ");
-		int maxTicketCapacity = input.nextInt();
 
-		Configuration config = new Configuration(totalTickets,ticketReleaseRate,customerRetrievalRate,maxTicketCapacity);
 
-		System.out.println(config);
-
-		SpringApplication.run(EventTicketingSystemApplication.class, args);
+		// SpringApplication.run(EventTicketingSystemApplication.class, args);
 	}
 
 }

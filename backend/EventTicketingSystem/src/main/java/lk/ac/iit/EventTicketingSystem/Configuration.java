@@ -1,6 +1,9 @@
-package lk.ac.iit.EventTicketingSystem.configuration;
+package lk.ac.iit.EventTicketingSystem;
 
-public class Configuration {
+import java.io.*;
+import com.google.gson.Gson;
+
+public class Configuration implements Serializable {
     private int totalTickets;
     private int ticketReleaseRate;
     private int customerRetrievalRate;
@@ -8,10 +11,6 @@ public class Configuration {
 
     // Default configuration
     public Configuration() {
-        this.totalTickets = 10000;
-        this.ticketReleaseRate = 100;
-        this.customerRetrievalRate = 50;
-        this.maxTicketCapacity = 5000;
     }
 
     public Configuration(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketCapacity) {
@@ -19,6 +18,23 @@ public class Configuration {
         this.ticketReleaseRate = ticketReleaseRate;
         this.customerRetrievalRate = customerRetrievalRate;
         this.maxTicketCapacity = maxTicketCapacity;
+    }
+
+    // load json
+    public static void loadConfiguration(Configuration config) throws IOException {
+        Gson gson = new Gson();
+        FileReader reader = new FileReader("Configuration.json");
+
+        Configuration newConfig = gson.fromJson(reader, Configuration.class);
+
+        // update empty config object with inputs from CLI
+        config.setTotalTickets(newConfig.totalTickets);
+        config.setTicketReleaseRate(newConfig.ticketReleaseRate);
+        config.setCustomerRetrievalRate(newConfig.customerRetrievalRate);
+        config.setMaxTicketCapacity(newConfig.maxTicketCapacity);
+
+        // Print the deserialized object
+        System.out.println(config);
     }
 
     //getters and setters
@@ -54,6 +70,7 @@ public class Configuration {
     public void setMaxTicketCapacity(int maxTicketCapacity) {
         this.maxTicketCapacity = maxTicketCapacity;
     }
+
 
     @Override
     public String toString() {
