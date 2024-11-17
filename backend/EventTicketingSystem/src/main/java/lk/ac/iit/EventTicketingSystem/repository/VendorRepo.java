@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface VendorRepo extends JpaRepository<Vendor, Long> {
 
-    Optional findVendorById(Long id);
+    Optional<Vendor> findVendorById(Long id);
 
     void deleteVendorById(Long id);
 }

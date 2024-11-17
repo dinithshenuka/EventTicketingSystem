@@ -1,7 +1,7 @@
 package lk.ac.iit.EventTicketingSystem.service;
 
+import lk.ac.iit.EventTicketingSystem.exception.UserNotFoundException;
 import lk.ac.iit.EventTicketingSystem.models.Ticket;
-import lk.ac.iit.EventTicketingSystem.models.Vendor;
 import lk.ac.iit.EventTicketingSystem.repository.TicketRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +31,8 @@ public class TicketService {
         return ticketRepo.save(ticket);
     }
 
-    public Ticket findVendorById(Long id) {
-        return ticketRepo.findVendorById(id)
+    public Ticket findTicketById(Long id) {
+        return ticketRepo.findTicketById(id)
                 .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
 
