@@ -36,7 +36,7 @@ public class TicketService {
                 .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
 
-    public void deleteTicketById(Long id) {
+    public void deleteTicket(Long id) {
         ticketRepo.deleteTicketById(id);
     }
 }
