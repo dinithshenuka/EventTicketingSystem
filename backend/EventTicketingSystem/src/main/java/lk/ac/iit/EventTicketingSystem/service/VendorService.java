@@ -5,6 +5,7 @@ import lk.ac.iit.EventTicketingSystem.repository.VendorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,6 +20,23 @@ public class VendorService {
     public Vendor addVendor(Vendor vendor) {
         vendor.setVendorCode(UUID.randomUUID().toString());
         return vendorRepo.save(vendor);
+    }
+
+    public List<Vendor> findAllVendors() {
+        return vendorRepo.findAll();
+    }
+
+    public Vendor updateVendor(Vendor vendor) {
+        return vendorRepo.save(vendor);
+    }
+
+    public Vendor findVendorById(Long id) {
+        return vendorRepo.findVendorById(id)
+                .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
+    }
+
+    public void deleteVendor(Long id){
+        vendorRepo.deleteVendorById(id);
     }
 
 }
