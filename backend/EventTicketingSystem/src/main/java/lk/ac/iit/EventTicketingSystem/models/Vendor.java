@@ -15,11 +15,13 @@ public class Vendor implements Serializable {
     private String phone;
     private String companyName;
     private String companyAddress;
+    private String vendorCode;
 
     public Vendor() {
     }
 
-    public Vendor(String companyAddress, String companyName, String phone, String email, String firstName) {
+    public Vendor(String vendorCode, String companyAddress, String companyName, String phone, String email, String firstName) {
+        this.vendorCode = vendorCode;
         this.companyAddress = companyAddress;
         this.companyName = companyName;
         this.phone = phone;
@@ -27,13 +29,14 @@ public class Vendor implements Serializable {
         this.firstName = firstName;
     }
 
-    public Vendor(int vendorId, String firstName, String email, String phone, String companyName, String companyAddress) {
+    public Vendor(int vendorId, String firstName, String email, String phone, String companyName, String companyAddress, String vendorCode) {
         this.vendorId = vendorId;
         this.firstName = firstName;
         this.email = email;
         this.phone = phone;
         this.companyName = companyName;
         this.companyAddress = companyAddress;
+        this.vendorCode = vendorCode;
     }
 
     //getters setters
@@ -84,6 +87,14 @@ public class Vendor implements Serializable {
 
     public void setCompanyAddress(String companyAddress) {
         this.companyAddress = companyAddress;
+    }
+
+    public String getVendorCode() {
+        return vendorCode;
+    }
+
+    public void setVendorCode(String vendorCode) {
+        this.vendorCode = vendorCode;
     }
 
     @Override

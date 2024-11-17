@@ -13,19 +13,23 @@ public class Ticket implements Serializable {
     private Long ticketId;
     private String eventName;
     private Date eventDate;
+    @Column(nullable = false, updatable = false)
+    private String ticketCode;
 
     public Ticket() {
     }
 
-    public Ticket(Date eventDate, String eventName) {
+    public Ticket(String ticketCode, Date eventDate, String eventName) {
+        this.ticketCode = ticketCode;
         this.eventDate = eventDate;
         this.eventName = eventName;
     }
 
-    public Ticket(Long ticketId, String eventName, Date eventDate) {
+    public Ticket(Long ticketId, String eventName, Date eventDate, String ticketCode) {
         this.ticketId = ticketId;
         this.eventName = eventName;
         this.eventDate = eventDate;
+        this.ticketCode = ticketCode;
     }
 
     // getters and setters
@@ -52,6 +56,14 @@ public class Ticket implements Serializable {
 
     public void setEventDate(Date eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public String getTicketCode() {
+        return ticketCode;
+    }
+
+    public void setTicketCode(String ticketCode) {
+        this.ticketCode = ticketCode;
     }
 
     @Override

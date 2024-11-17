@@ -13,21 +13,25 @@ public class Customer implements Serializable {
     private String firstName;
     private String email;
     private String phone;
+    @Column(nullable = false, updatable = false)
+    private String customerCode;
 
     public Customer() {
     }
 
-    public Customer(String phone, String email, String firstName) {
+    public Customer(String customerCode, String phone, String email, String firstName) {
+        this.customerCode = customerCode;
         this.phone = phone;
         this.email = email;
         this.firstName = firstName;
     }
 
-    public Customer(Long customerId, String firstName, String email, String phone) {
+    public Customer(Long customerId, String firstName, String email, String phone, String customerCode) {
         this.customerId = customerId;
         this.firstName = firstName;
         this.email = email;
         this.phone = phone;
+        this.customerCode = customerCode;
     }
 
     //getters n setters
@@ -62,6 +66,14 @@ public class Customer implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getCustomerCode() {
+        return customerCode;
+    }
+
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
     }
 
     @Override
