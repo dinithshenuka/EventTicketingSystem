@@ -31,12 +31,12 @@ public class TicketService {
         return ticketRepo.save(ticket);
     }
 
-    public Ticket findTicketById(Long id) {
-        return ticketRepo.findTicketById(id)
-                .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
+    public Ticket findTicketById(Long ticketId) {
+        return ticketRepo.findById(ticketId)
+                .orElseThrow(() -> new UserNotFoundException("User by id " + ticketId + " was not found"));
     }
 
-    public void deleteTicket(Long id) {
-        ticketRepo.deleteTicketById(id);
+    public void deleteTicket(Long ticketId) {
+        ticketRepo.deleteById(ticketId);
     }
 }

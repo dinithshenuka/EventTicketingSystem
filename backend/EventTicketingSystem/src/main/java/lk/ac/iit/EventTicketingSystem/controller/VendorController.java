@@ -26,9 +26,9 @@ public class VendorController {
      return new ResponseEntity<>(vendors, HttpStatus.OK);
     }
 
-    @GetMapping("/find/{id}")
-    public ResponseEntity<Vendor> getVendorById(@PathVariable("id") Long id) {
-        Vendor vendor = vendorService.findVendorById(id);
+    @GetMapping("/find/{vendorId}")
+    public ResponseEntity<Vendor> getVendorById(@PathVariable Long vendorId) {
+        Vendor vendor= vendorService.findVendorById(vendorId);
         return new ResponseEntity<>(vendor, HttpStatus.OK);
     }
 
@@ -44,9 +44,16 @@ public class VendorController {
         return new ResponseEntity<>(updatedVendor, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteVendor(@PathVariable("id") Long id) {
-        vendorService.deleteVendor(id);
+    @DeleteMapping("/delete/{vendorId}")
+    public ResponseEntity<?> deleteVendor(@PathVariable Long vendorId) {
+        vendorService.deleteVendor(vendorId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
+
+
+
+
+
+
+

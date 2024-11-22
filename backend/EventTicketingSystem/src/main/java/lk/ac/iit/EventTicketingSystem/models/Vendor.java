@@ -15,6 +15,7 @@ public class Vendor implements Serializable {
     private String phone;
     private String companyName;
     private String companyAddress;
+    @Column(nullable = false, updatable = false)
     private String vendorCode;
 
     public Vendor() {

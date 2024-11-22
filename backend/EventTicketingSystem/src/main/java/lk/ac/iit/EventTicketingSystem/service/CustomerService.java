@@ -30,13 +30,13 @@ public class CustomerService {
         return customerRepo.save(customer);
     }
 
-    public Customer findCustomerById(Long id) {
-        return customerRepo.findCustomerById(id)
-                .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
+    public Customer findCustomerById(Long customerId) {
+        return customerRepo.findById(customerId)
+                .orElseThrow(() -> new UserNotFoundException("User by id " + customerId + " was not found"));
     }
 
-    public void deleteCustomer(Long id) {
-        customerRepo.deleteCustomerById(id);
+    public void deleteCustomer(Long customerId) {
+        customerRepo.deleteById(customerId);
     }
 
 }
