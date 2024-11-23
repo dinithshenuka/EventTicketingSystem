@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @SpringBootApplication
-@RestController
 public class EventTicketingSystemApplication {
 
 	public static void main(String[] args) throws IOException {

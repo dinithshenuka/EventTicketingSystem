@@ -1,5 +1,6 @@
 package lk.ac.iit.EventTicketingSystem.controller;
 
+import lk.ac.iit.EventTicketingSystem.dto.AddTicketDTO;
 import lk.ac.iit.EventTicketingSystem.models.Ticket;
 import lk.ac.iit.EventTicketingSystem.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/ticket")
@@ -17,6 +19,13 @@ public class TicketController {
     public TicketController(TicketService ticketService) {
         this.ticketService = ticketService;
     }
+
+    @PostMapping("/add")
+    public CompletableFuture<ResponseEntity<Ticket>> addTicket(@RequestBody AddTicketDTO addTicketDTO) {
+        return ticketService.addTicket(addTicketDTO)
+                .thenApply(newTicket -> new ResponseEntity<>(newTicket, HttpStatus.CREATED));
+    }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<Ticket>> getAllTickets() {
@@ -30,11 +39,11 @@ public class TicketController {
         return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<Ticket> addTicket(@RequestBody Ticket ticket) {
-        Ticket newTicket = ticketService.addTicket(ticket);
-        return new ResponseEntity<>(newTicket, HttpStatus.CREATED);
-    }
+//    @PostMapping("/add")
+//    public ResponseEntity<Ticket> addTicket(@RequestBody Ticket ticket) {
+//        Ticket newTicket = ticketService.addTicket(ticket);
+//        return new ResponseEntity<>(newTicket, HttpStatus.CREATED);
+//    }
 
     @PutMapping("/update")
     public ResponseEntity<Ticket> updateTicket(@RequestBody Ticket ticket) {
