@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,12 +57,6 @@ public class TicketService {
 
         return CompletableFuture.completedFuture(savedTickets); // Return all created tickets
     }
-
-
-//    public Ticket addTicket(Ticket ticket) {
-//        ticket.setTicketCode(UUID.randomUUID().toString());
-//        return ticketRepo.save(ticket);
-//    }
 
     public List<Ticket> findAllTickets() {
         return ticketRepo.findAll();

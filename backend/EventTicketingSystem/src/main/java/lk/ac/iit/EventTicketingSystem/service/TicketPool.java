@@ -27,4 +27,13 @@ public class TicketPool {
             return ticketList.size(); // Thread-safe access to the size of the list
         }
     }
+
+
+
+    @Override
+    public String toString() {
+        return "TicketPool{" +
+                "ticketList=" + ticketList +
+                '}';
+    }
 }
