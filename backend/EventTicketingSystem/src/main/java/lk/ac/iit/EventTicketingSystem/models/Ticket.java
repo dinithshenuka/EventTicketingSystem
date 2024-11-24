@@ -11,24 +11,26 @@ public class Ticket implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long ticketId;
-    private String eventName;
-    private Date eventDate;
+    private double ticketPrice;
+    private String ticketType;
+    private String ticketStatus;
     @Column(nullable = false, updatable = false)
     private String ticketCode;
 
     public Ticket() {
     }
 
-    public Ticket(String ticketCode, Date eventDate, String eventName) {
-        this.ticketCode = ticketCode;
-        this.eventDate = eventDate;
-        this.eventName = eventName;
+    public Ticket(double ticketPrice, String ticketType, String ticketStatus) {
+        this.ticketPrice = ticketPrice;
+        this.ticketType = ticketType;
+        this.ticketStatus = ticketStatus;
     }
 
-    public Ticket(Long ticketId, String eventName, Date eventDate, String ticketCode) {
+    public Ticket(Long ticketId, double ticketPrice, String ticketType, String ticketStatus, String ticketCode) {
         this.ticketId = ticketId;
-        this.eventName = eventName;
-        this.eventDate = eventDate;
+        this.ticketPrice = ticketPrice;
+        this.ticketType = ticketType;
+        this.ticketStatus = ticketStatus;
         this.ticketCode = ticketCode;
     }
 
@@ -42,20 +44,28 @@ public class Ticket implements Serializable {
         this.ticketId = ticketId;
     }
 
-    public String getEventName() {
-        return eventName;
+    public double getTicketPrice() {
+        return ticketPrice;
     }
 
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
+    public void setTicketPrice(double ticketPrice) {
+        this.ticketPrice = ticketPrice;
     }
 
-    public Date getEventDate() {
-        return eventDate;
+    public String getTicketType() {
+        return ticketType;
     }
 
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
+    public void setTicketType(String ticketType) {
+        this.ticketType = ticketType;
+    }
+
+    public String getTicketStatus() {
+        return ticketStatus;
+    }
+
+    public void setTicketStatus(String ticketStatus) {
+        this.ticketStatus = ticketStatus;
     }
 
     public String getTicketCode() {
@@ -70,8 +80,10 @@ public class Ticket implements Serializable {
     public String toString() {
         return "Ticket{" +
                 "ticketId=" + ticketId +
-                ", eventName='" + eventName + '\'' +
-                ", eventDate=" + eventDate +
+                ", ticketPrice=" + ticketPrice +
+                ", ticketType='" + ticketType + '\'' +
+                ", ticketStatus='" + ticketStatus + '\'' +
+                ", ticketCode='" + ticketCode + '\'' +
                 '}';
     }
 }

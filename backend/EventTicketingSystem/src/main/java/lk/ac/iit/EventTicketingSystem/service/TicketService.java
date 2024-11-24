@@ -30,31 +30,32 @@ public class TicketService {
 
     @Async(value = "treadPool")
     public CompletableFuture<List<Ticket>> addTicket(AddTicketDTO addTicketDTO) {
-
         List<Ticket> savedTickets = new ArrayList<>();
         Ticket baseTicket = addTicketDTO.getTicket();
         int ticketCount = addTicketDTO.getTicketCount();
-
         try {
             for (int loop = 0; loop < ticketCount; loop++) {
-                Ticket ticket = new Ticket(); // Create a new instance
+
+                Ticket ticket = new Ticket();
+
                 ticket.setTicketCode(UUID.randomUUID().toString());
-                ticket.setEventDate(baseTicket.getEventDate());
-                ticket.setEventName(baseTicket.getEventName());
+                ticket.setTicketPrice(baseTicket.getTicketPrice());
+                ticket.setTicketType(baseTicket.getTicketType());
+                ticket.setTicketType(baseTicket.getTicketType());
+                ticket.setTicketStatus(baseTicket.getTicketStatus());
 
                 ticketRepo.save(ticket); // Save to DB
-                logger.info("Ticket saved to Database: {}", ticket);
                 ticketPool.addToTicketPool(ticket); // Add to the pool
-                logger.info("Ticket saved to the Pool: {}", ticket);
+                logger.info("Ticket saved to the Database and TicketPool: {}", ticket);
 
                 Thread.sleep(2000);
 
-                savedTickets.add(ticket); // Add to the list of saved tickets
+                // for api return
+                savedTickets.add(ticket);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-
         return CompletableFuture.completedFuture(savedTickets); // Return all created tickets
     }
 
