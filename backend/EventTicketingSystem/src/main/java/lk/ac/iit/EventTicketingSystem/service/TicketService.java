@@ -29,7 +29,7 @@ public class TicketService {
 
     Logger logger = (Logger) LoggerFactory.getLogger(TicketService.class);
 
-    @Async
+    @Async(value = "treadPool")
     public CompletableFuture<List<Ticket>> addTicket(AddTicketDTO addTicketDTO) {
 
         List<Ticket> savedTickets = new ArrayList<>();
@@ -48,9 +48,10 @@ public class TicketService {
                 ticketPool.addToTicketPool(ticket); // Add to the pool
                 logger.info("Ticket saved to the Pool: {}", ticket);
 
+                Thread.sleep(2000);
+
                 savedTickets.add(ticket); // Add to the list of saved tickets
             }
-            Thread.sleep(2000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
