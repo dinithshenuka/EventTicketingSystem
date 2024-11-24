@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -18,31 +19,44 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class TicketService {
     private final TicketRepo ticketRepo;
+    private final TicketPool ticketPool;
 
     @Autowired
-    public TicketService(TicketRepo ticketRepo) {
+    public TicketService(TicketRepo ticketRepo, TicketPool ticketPool) {
         this.ticketRepo = ticketRepo;
+        this.ticketPool = new TicketPool();
     }
 
     Logger logger = (Logger) LoggerFactory.getLogger(TicketService.class);
 
     @Async
-    public CompletableFuture<Ticket> addTicket(AddTicketDTO addTicketDTO) {
-       
-        Ticket ticket = addTicketDTO.getTicket();
+    public CompletableFuture<List<Ticket>> addTicket(AddTicketDTO addTicketDTO) {
+
+        List<Ticket> savedTickets = new ArrayList<>();
+        Ticket baseTicket = addTicketDTO.getTicket();
         int ticketCount = addTicketDTO.getTicketCount();
-        ticket.setTicketCode(UUID.randomUUID().toString());
 
-            // Save the Ticket object to the database
-        Ticket savedTicket = ticketRepo.save(ticket);
+        try {
+            for (int loop = 0; loop < ticketCount; loop++) {
+                Ticket ticket = new Ticket(); // Create a new instance
+                ticket.setTicketCode(UUID.randomUUID().toString());
+                ticket.setEventDate(baseTicket.getEventDate());
+                ticket.setEventName(baseTicket.getEventName());
 
-            // Handle ticketCount logic (e.g., adding to a pool or maintaining a cache)
-        logger.info("Ticket Count: {}", ticketCount);
-            // Example: Adding logic for pool management (not database related)
+                ticketRepo.save(ticket); // Save to DB
+                logger.info("Ticket saved to Database: {}", ticket);
+                ticketPool.addToTicketPool(ticket); // Add to the pool
+                logger.info("Ticket saved to the Pool: {}", ticket);
 
-        return CompletableFuture.completedFuture(ticket);
+                savedTickets.add(ticket); // Add to the list of saved tickets
+            }
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        return CompletableFuture.completedFuture(savedTickets); // Return all created tickets
     }
-
 
 
 //    public Ticket addTicket(Ticket ticket) {

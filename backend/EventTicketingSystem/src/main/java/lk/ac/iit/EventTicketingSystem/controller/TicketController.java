@@ -21,9 +21,9 @@ public class TicketController {
     }
 
     @PostMapping("/add")
-    public CompletableFuture<ResponseEntity<Ticket>> addTicket(@RequestBody AddTicketDTO addTicketDTO) {
+    public CompletableFuture<ResponseEntity<List<Ticket>>> addTicket(@RequestBody AddTicketDTO addTicketDTO) {
         return ticketService.addTicket(addTicketDTO)
-                .thenApply(newTicket -> new ResponseEntity<>(newTicket, HttpStatus.CREATED));
+                .thenApply(newTickets -> new ResponseEntity<>(newTickets, HttpStatus.CREATED));
     }
 
 
