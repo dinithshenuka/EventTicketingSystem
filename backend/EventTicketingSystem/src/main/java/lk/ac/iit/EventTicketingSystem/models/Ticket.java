@@ -3,7 +3,6 @@ package lk.ac.iit.EventTicketingSystem.models;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Entity
 public class Ticket implements Serializable {
@@ -16,6 +15,14 @@ public class Ticket implements Serializable {
     private String ticketStatus;
     @Column(nullable = false, updatable = false)
     private String ticketCode;
+
+    @ManyToOne
+    @JoinColumn(name = "vendorId")
+    private Vendor vendor;
+
+    @ManyToOne
+    @JoinColumn(name = "eventId")
+    private Event event;
 
     public Ticket() {
     }

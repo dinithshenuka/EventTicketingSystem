@@ -2,6 +2,8 @@ package lk.ac.iit.EventTicketingSystem.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Event {
     @Id
@@ -15,6 +17,11 @@ public class Event {
     @Column(updatable = false, nullable = false)
     private String eventCode;
 
+    @ManyToMany(mappedBy = "events")
+    private List<Vendor> vendors;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    private List<Ticket> tickets;
 
     public Event() {
     }

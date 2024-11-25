@@ -3,6 +3,7 @@ package lk.ac.iit.EventTicketingSystem.models;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 public class Vendor implements Serializable {
@@ -17,6 +18,17 @@ public class Vendor implements Serializable {
     private String companyAddress;
     @Column(nullable = false, updatable = false)
     private String vendorCode;
+
+    @ManyToMany
+    @JoinTable(
+            name = "vendor_event",
+            joinColumns = @JoinColumn(name = "vendorId"),
+            inverseJoinColumns = @JoinColumn(name = "eventId")
+    )
+    private List<Event> events;
+
+    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL)
+    private List<Ticket> tickets;
 
     public Vendor() {
     }

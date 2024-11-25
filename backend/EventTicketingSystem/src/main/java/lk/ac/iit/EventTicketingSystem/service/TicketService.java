@@ -23,11 +23,12 @@ public class TicketService {
     @Autowired
     public TicketService(TicketRepo ticketRepo, TicketPool ticketPool) {
         this.ticketRepo = ticketRepo;
-        this.ticketPool = new TicketPool();
+        this.ticketPool = ticketPool;
     }
 
-    Logger logger = (Logger) LoggerFactory.getLogger(TicketService.class);
+    Logger logger = LoggerFactory.getLogger(TicketService.class);
 
+    // method to add tickets (Vendor add tickets)
     @Async(value = "treadPool")
     public CompletableFuture<List<Ticket>> addTicket(AddTicketDTO addTicketDTO) {
         List<Ticket> savedTickets = new ArrayList<>();
@@ -54,10 +55,15 @@ public class TicketService {
                 savedTickets.add(ticket);
             }
         } catch (InterruptedException e) {
+            logger.error("Thread was interrupted", e);
             Thread.currentThread().interrupt();
+            throw new RuntimeException("Thread was interrupted", e);
         }
-        return CompletableFuture.completedFuture(savedTickets); // Return all created tickets
+        return CompletableFuture.completedFuture(savedTickets); // api
     }
+
+    // method to remove tickets (Customer buy tickets)
+
 
     public List<Ticket> findAllTickets() {
         return ticketRepo.findAll();
