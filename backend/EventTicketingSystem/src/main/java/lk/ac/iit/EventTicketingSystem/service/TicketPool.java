@@ -11,9 +11,14 @@ import java.util.List;
 public class TicketPool {
     private final List<Ticket> ticketList = Collections.synchronizedList(new ArrayList<>());
 
-
+    // add to pool
     public void addToTicketPool(Ticket ticket) {
         ticketList.add(ticket); // Adds a ticket to the pool
+    }
+
+    // remove from pool
+    public void removeFromTicketPool(Ticket ticket) {
+        ticketList.remove(ticket);
     }
 
     public List<Ticket> getAllTicketsInPool() {

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-@Entity
+@Entity(name = "Vendor")
 public class Vendor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,6 +13,7 @@ public class Vendor implements Serializable {
     private int vendorId;
     private String firstName;
     private String email;
+    @Column(unique = true)
     private String phone;
     private String companyName;
     private String companyAddress;

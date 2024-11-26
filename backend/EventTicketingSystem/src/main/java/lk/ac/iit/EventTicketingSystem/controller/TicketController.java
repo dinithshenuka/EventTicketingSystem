@@ -2,6 +2,7 @@ package lk.ac.iit.EventTicketingSystem.controller;
 
 import lk.ac.iit.EventTicketingSystem.dto.AddTicketDTO;
 import lk.ac.iit.EventTicketingSystem.models.Ticket;
+import lk.ac.iit.EventTicketingSystem.service.TicketPool;
 import lk.ac.iit.EventTicketingSystem.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,11 +16,15 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/ticket")
 public class TicketController {
     private final TicketService ticketService;
+    private final TicketPool ticketPool;
+
     @Autowired
-    public TicketController(TicketService ticketService) {
+    public TicketController(TicketService ticketService, TicketPool ticketPool) {
         this.ticketService = ticketService;
+        this.ticketPool = ticketPool;
     }
 
+    // vendor add tickets
     @PostMapping("/add")
     public CompletableFuture<ResponseEntity<List<Ticket>>> addTicket(@RequestBody AddTicketDTO addTicketDTO) {
         return ticketService.addTicket(addTicketDTO)
@@ -33,17 +38,25 @@ public class TicketController {
         return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
+    // get all tickets in pool
+    @GetMapping("/all/pool")
+    public ResponseEntity<List<Ticket>> getAllTicketsInPool() {
+        List<Ticket> tickets = ticketPool.getAllTicketsInPool();
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
+    }
+
+    // ticket count from the pool
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getTicketCount() {
+        int ticketCount = ticketPool.getTicketCountInPool();
+        return new ResponseEntity<>(ticketCount, HttpStatus.OK);
+    }
+
     @GetMapping("/find/{ticketId}")
     public ResponseEntity<Ticket> getTicketById(@PathVariable Long ticketId) {
         Ticket ticket = ticketService.findTicketById(ticketId);
         return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
-
-//    @PostMapping("/add")
-//    public ResponseEntity<Ticket> addTicket(@RequestBody Ticket ticket) {
-//        Ticket newTicket = ticketService.addTicket(ticket);
-//        return new ResponseEntity<>(newTicket, HttpStatus.CREATED);
-//    }
 
     @PutMapping("/update")
     public ResponseEntity<Ticket> updateTicket(@RequestBody Ticket ticket) {
