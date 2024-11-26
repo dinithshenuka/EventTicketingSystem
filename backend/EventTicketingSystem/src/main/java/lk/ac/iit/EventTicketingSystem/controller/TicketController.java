@@ -26,7 +26,6 @@ public class TicketController {
                 .thenApply(newTickets -> new ResponseEntity<>(newTickets, HttpStatus.CREATED));
     }
 
-
     @GetMapping("/all")
     public ResponseEntity<List<Ticket>> getAllTickets() {
         List<Ticket> tickets = ticketService.findAllTickets();
@@ -49,6 +48,13 @@ public class TicketController {
     public ResponseEntity<Ticket> updateTicket(@RequestBody Ticket ticket) {
         Ticket updatedTicket = ticketService.updateTicket(ticket);
         return new ResponseEntity<>(updatedTicket, HttpStatus.OK);
+    }
+
+    // buy tickets by its ID
+    @PutMapping("/buy/{ticketId}")
+    public CompletableFuture<ResponseEntity<Ticket>> buyTicket(@PathVariable Long ticketId) {
+        return ticketService.buyTicket(ticketId)
+                .thenApply(ticket -> new ResponseEntity<>(ticket, HttpStatus.OK));
     }
 
     @DeleteMapping("/delete/{ticketId}")
