@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
 @Service
 public class TicketPool {
     private final List<Ticket> ticketList = Collections.synchronizedList(new ArrayList<>());
@@ -22,8 +23,12 @@ public class TicketPool {
 
     // remove from pool
     public void removeFromTicketPool(Ticket ticket) {
-        ticketList.remove(ticket);
-        logger.info("Ticket removed from pool: {}", ticket);
+        boolean removed = ticketList.remove(ticket);
+        if (removed) {
+            logger.info("Ticket removed from pool: {}", ticket);
+        } else {
+            logger.warn("Ticket not found in pool: {}", ticket);
+        }
     }
 
     public List<Ticket> getAllTicketsInPool() {
@@ -37,8 +42,6 @@ public class TicketPool {
             return ticketList.size(); // Thread-safe access to the size of the list
         }
     }
-
-
 
     @Override
     public String toString() {

@@ -3,6 +3,7 @@ package lk.ac.iit.EventTicketingSystem.models;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity(name = "Ticket")
 public class Ticket implements Serializable {
@@ -12,7 +13,7 @@ public class Ticket implements Serializable {
     private Long ticketId;
     private double ticketPrice;
     private String ticketType;
-    private boolean ticketStatus;
+    private String ticketStatus;
     @Column(nullable = false, updatable = false)
     private String ticketCode;
 
@@ -27,13 +28,13 @@ public class Ticket implements Serializable {
     public Ticket() {
     }
 
-    public Ticket(double ticketPrice, String ticketType, boolean ticketStatus) {
+    public Ticket(double ticketPrice, String ticketType, String ticketStatus) {
         this.ticketPrice = ticketPrice;
         this.ticketType = ticketType;
         this.ticketStatus = ticketStatus;
     }
 
-    public Ticket(Long ticketId, double ticketPrice, String ticketType, boolean ticketStatus, String ticketCode) {
+    public Ticket(Long ticketId, double ticketPrice, String ticketType, String ticketStatus, String ticketCode) {
         this.ticketId = ticketId;
         this.ticketPrice = ticketPrice;
         this.ticketType = ticketType;
@@ -42,6 +43,7 @@ public class Ticket implements Serializable {
     }
 
     // getters and setters
+
 
     public Long getTicketId() {
         return ticketId;
@@ -67,11 +69,11 @@ public class Ticket implements Serializable {
         this.ticketType = ticketType;
     }
 
-    public boolean getTicketStatus() {
+    public String getTicketStatus() {
         return ticketStatus;
     }
 
-    public void setTicketStatus(boolean ticketStatus) {
+    public void setTicketStatus(String ticketStatus) {
         this.ticketStatus = ticketStatus;
     }
 
@@ -81,6 +83,35 @@ public class Ticket implements Serializable {
 
     public void setTicketCode(String ticketCode) {
         this.ticketCode = ticketCode;
+    }
+
+    public Vendor getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ticket ticket = (Ticket) o;
+        return Objects.equals(ticketId, ticket.ticketId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ticketId);
     }
 
     @Override

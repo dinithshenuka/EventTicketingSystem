@@ -65,7 +65,28 @@ public class TicketService {
     }
 
     // method to remove tickets (Customer buy tickets)
+    @Async(value = "treadPool")
+    public CompletableFuture<Ticket> buyTicket(Long ticketId) {
+        return CompletableFuture.supplyAsync(() -> {
+            Ticket foundTicket = ticketRepo.findById(ticketId)
+                    .orElseThrow(() -> new UserNotFoundException("Ticket by id " + ticketId + " was not found"));
+            logger.info("Ticket found: {}", foundTicket);
 
+            synchronized (foundTicket) {
+                if (foundTicket.getTicketStatus().equals("available")) {
+                    foundTicket.setTicketStatus("booked");
+
+                    ticketRepo.save(foundTicket);
+                    ticketPool.removeFromTicketPool(foundTicket);
+
+                    logger.info("Ticket booked: {}", foundTicket);
+                } else {
+                    throw new IllegalStateException("Ticket is already booked");
+                }
+            }
+            return foundTicket;
+        });
+    }
 
     public List<Ticket> findAllTickets() {
         return ticketRepo.findAll();
@@ -82,29 +103,5 @@ public class TicketService {
 
     public void deleteTicket(Long ticketId) {
         ticketRepo.deleteById(ticketId);
-    }
-
-    @Async(value = "treadPool")
-    public CompletableFuture<Ticket> buyTicket(Long ticketId) {
-        return CompletableFuture.supplyAsync(() -> {
-            Ticket foundTicket = ticketRepo.findById(ticketId)
-                    .orElseThrow(() -> new UserNotFoundException("Ticket by id " + ticketId + " was not found"));
-            logger.info("Ticket found: {}", foundTicket);
-
-            synchronized (foundTicket) {
-                boolean currentStatus = foundTicket.getTicketStatus();
-                if (currentStatus){
-                    foundTicket.setTicketStatus(false);
-
-                    ticketRepo.save(foundTicket);
-                    ticketPool.removeFromTicketPool(foundTicket);
-
-                    logger.info("Ticket booked: {}", foundTicket);
-                } else {
-                    throw new IllegalStateException("Ticket is already booked");
-                }
-            }
-            return foundTicket;
-        });
     }
 }
