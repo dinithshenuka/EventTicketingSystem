@@ -2,13 +2,10 @@ package lk.ac.iit.EventTicketingSystem.models;
 
 import jakarta.persistence.*;
 
-<<<<<<< Updated upstream
 import java.util.List;
 
-@Entity
-=======
 @Entity(name = "Event")
->>>>>>> Stashed changes
+
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
