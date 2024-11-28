@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 
-@Entity
+@Entity(name = "Ticket")
 public class Ticket implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,7 +12,7 @@ public class Ticket implements Serializable {
     private Long ticketId;
     private double ticketPrice;
     private String ticketType;
-    private String ticketStatus;
+    private boolean ticketStatus;
     @Column(nullable = false, updatable = false)
     private String ticketCode;
 
@@ -27,13 +27,13 @@ public class Ticket implements Serializable {
     public Ticket() {
     }
 
-    public Ticket(double ticketPrice, String ticketType, String ticketStatus) {
+    public Ticket(double ticketPrice, String ticketType, boolean ticketStatus) {
         this.ticketPrice = ticketPrice;
         this.ticketType = ticketType;
         this.ticketStatus = ticketStatus;
     }
 
-    public Ticket(Long ticketId, double ticketPrice, String ticketType, String ticketStatus, String ticketCode) {
+    public Ticket(Long ticketId, double ticketPrice, String ticketType, boolean ticketStatus, String ticketCode) {
         this.ticketId = ticketId;
         this.ticketPrice = ticketPrice;
         this.ticketType = ticketType;
@@ -67,11 +67,11 @@ public class Ticket implements Serializable {
         this.ticketType = ticketType;
     }
 
-    public String getTicketStatus() {
+    public boolean getTicketStatus() {
         return ticketStatus;
     }
 
-    public void setTicketStatus(String ticketStatus) {
+    public void setTicketStatus(boolean ticketStatus) {
         this.ticketStatus = ticketStatus;
     }
 
