@@ -1,9 +1,7 @@
 package lk.ac.iit.EventTicketingSystem.service;
 
 import lk.ac.iit.EventTicketingSystem.dto.AddTicketDTO;
-import lk.ac.iit.EventTicketingSystem.dto.BuyTicketDTO;
 import lk.ac.iit.EventTicketingSystem.exception.UserNotFoundException;
-import lk.ac.iit.EventTicketingSystem.models.Customer;
 import lk.ac.iit.EventTicketingSystem.models.Ticket;
 import lk.ac.iit.EventTicketingSystem.repository.TicketRepo;
 import org.slf4j.Logger;
@@ -17,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 
 @Service
 public class TicketService {
@@ -80,6 +77,12 @@ public class TicketService {
 
                     ticketRepo.save(foundTicket);
                     ticketPool.removeFromTicketPool(foundTicket);
+
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     logger.info("Ticket booked: {}", foundTicket);
                 } else {

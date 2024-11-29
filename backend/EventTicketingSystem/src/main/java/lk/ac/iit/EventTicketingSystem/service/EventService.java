@@ -1,7 +1,6 @@
 package lk.ac.iit.EventTicketingSystem.service;
 
 import lk.ac.iit.EventTicketingSystem.exception.UserNotFoundException;
-import lk.ac.iit.EventTicketingSystem.models.Customer;
 import lk.ac.iit.EventTicketingSystem.models.Event;
 import lk.ac.iit.EventTicketingSystem.repository.EventRepo;
 import org.springframework.beans.factory.annotation.Autowired;
