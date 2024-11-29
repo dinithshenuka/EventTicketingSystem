@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,7 @@ public class TicketService {
 
     // method to remove tickets (Customer buy tickets)
     @Async(value = "treadPool")
+    @Transactional
     public CompletableFuture<Ticket> buyTicket(Long ticketId) {
         return CompletableFuture.supplyAsync(() -> {
             Ticket foundTicket = ticketRepo.findById(ticketId)

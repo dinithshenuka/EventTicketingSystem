@@ -1,52 +1,75 @@
 package lk.ac.iit.EventTicketingSystem.service;
 
+import lk.ac.iit.EventTicketingSystem.SystemConfiguration;
 import lk.ac.iit.EventTicketingSystem.models.Ticket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class TicketPool {
-    private final List<Ticket> ticketList = Collections.synchronizedList(new ArrayList<>());
-    private static final Logger logger = LoggerFactory.getLogger(TicketPool.class);
+    private final List<Ticket> ticketPoolList = new ArrayList<>();
+    private final SystemConfiguration systemConfiguration;
+    private final ReentrantLock lock = new ReentrantLock();
+    private final Condition notFull = lock.newCondition();
+    private final Condition notEmpty = lock.newCondition();
 
-    // add to pool
+    public TicketPool(SystemConfiguration systemConfiguration) {
+        this.systemConfiguration = systemConfiguration;
+    }
+
+    // add ticket to the pool (Vendor add tickets)
     public void addToTicketPool(Ticket ticket) {
-        ticketList.add(ticket); // Adds a ticket to the pool
-        logger.info("Ticket added to pool: {}", ticket);
+        lock.lock();
+        try {
+            while (ticketPoolList.size() == systemConfiguration.getMaxTicketPoolCapacity()) {
+                notFull.await();
+            }
+            ticketPoolList.add(ticket);
+            notEmpty.signalAll();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
+        }
     }
 
-    // remove from pool
+    // remove tickets from pool (Customer buy tickets)
     public void removeFromTicketPool(Ticket ticket) {
-        boolean removed = ticketList.remove(ticket);
-        if (removed) {
-            logger.info("Ticket removed from pool: {}", ticket);
-        } else {
-            logger.warn("Ticket not found in pool: {}", ticket);
+        lock.lock();
+        try {
+            while (ticketPoolList.isEmpty()) {
+                notEmpty.await();
+            }
+            ticketPoolList.remove(ticket);
+            notFull.signalAll();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
         }
     }
 
+    // get all tickets in the pool
     public List<Ticket> getAllTicketsInPool() {
-        synchronized (ticketList) {
-            return new ArrayList<>(ticketList);
+        lock.lock();
+        try {
+            return new ArrayList<>(ticketPoolList);
+        } finally {
+            lock.unlock();
         }
     }
 
+    // get ticket count in the pool
     public int getTicketCountInPool() {
-        synchronized (ticketList) {
-            return ticketList.size(); // Thread-safe access to the size of the list
+        lock.lock();
+        try {
+            return ticketPoolList.size();
+        } finally {
+            lock.unlock();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "TicketPool{" +
-                "ticketList=" + ticketList +
-                '}';
     }
 }
