@@ -1,0 +1,14 @@
+<h3>On Going Events</h3>
+<div class="container">
+    <div class="row">
+        @for(item of eventList; track $index){
+            <div class="col-3 p-2">
+                <!-- <img [src]="item.imageUrl" alt="" class="card-img-top"> -->
+                <div class="card-body">
+                    <h5 class="card-title text-center">{{item.eventName}}</h5>
+                    <p class="card-text text-center">{{item.eventDate}} | {{item.eventTime}}</p>
+                    <a href="" class="btn btn-primary">Book Now</a>
+                </div>
+            </div>
+        }
+        

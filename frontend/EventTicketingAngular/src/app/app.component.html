@@ -1,14 +1,14 @@
 <!-- boostrap nav bar with home buy ticket add ticket button -->
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="javascript:void(0)">VENTIX</a>
+    <a class="navbar-brand nav-link" routerLink="/home">VENTIX</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="mynavbar">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)">Buy Tickets</a>
+          <a class="nav-link" routerLink="/event-page">Buy Tickets</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="javascript:void(0)">Sell TIckets</a>
@@ -25,5 +25,5 @@
   </div>
 </nav>
 
-<router-outlet />
+<router-outlet></router-outlet>
 
