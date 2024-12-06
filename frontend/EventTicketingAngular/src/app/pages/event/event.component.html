@@ -5,6 +5,9 @@
     <p><strong>Date:</strong> {{ eventData.eventDate }}</p>
     <p><strong>Time:</strong> {{ eventData.eventTime }}</p>
     <p><strong>Code:</strong> {{ eventData.eventCode }}</p>
+
+    <!-- buy tickets button navigate to booking component-->
+    <button class="btn btn-primary" routerLink="/booking" >Buy Tickets</button>
 </div>
 <div *ngIf="!eventData">
     <p>Loading event details...</p>
