@@ -1,1 +1,11 @@
 <p>event works!</p>
+<div *ngIf="eventData">
+    <h2>{{ eventData.eventName }}</h2>
+    <p><strong>Location:</strong> {{ eventData.eventLocation }}</p>
+    <p><strong>Date:</strong> {{ eventData.eventDate }}</p>
+    <p><strong>Time:</strong> {{ eventData.eventTime }}</p>
+    <p><strong>Code:</strong> {{ eventData.eventCode }}</p>
+</div>
+<div *ngIf="!eventData">
+    <p>Loading event details...</p>
+</div>

@@ -6,4 +6,5 @@ export interface Event {
     eventDate: string;
     eventTime: string;
     eventCode: string;
+    eventImgUrl: string;
 }

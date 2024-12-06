@@ -17,4 +17,9 @@ export class EventService {
     debugger;
     return this.http.get<Event[]>(`${this.apiUrl}all`);
   }
+
+  // Get event by id
+  getEventById(eventId: number): Observable<Event> {
+    return this.http.get<Event>(`${this.apiUrl}find/${eventId}`);
+  }
 }

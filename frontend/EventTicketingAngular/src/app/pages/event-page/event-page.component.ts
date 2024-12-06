@@ -32,3 +32,4 @@ export class EventPageComponent implements OnInit {
     });
   }
 }
+
