@@ -1,4 +1,3 @@
-// interface for event 
 export interface Event {
     eventId: number;
     eventName: string;
@@ -7,4 +6,30 @@ export interface Event {
     eventTime: string;
     eventCode: string;
     eventImgUrl: string;
+}
+
+export interface Customer {
+    customerId: number;
+    firstName: string;
+    email: string;
+    phone: string;
+    customerCode: string;
+} 
+
+export interface Ticket {
+    ticketId: number;
+    ticketPrice: number;
+    ticketType: string;
+    ticketStatus: string;
+    ticketCode: string;
+}
+
+export interface Vendor {
+    vendorId: number;
+    firstName: string;
+    email: string;
+    phone: string;
+    companyName: string;
+    companyAddress: string;
+    vendorCode: string;
 }
