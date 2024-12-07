@@ -38,11 +38,11 @@ public class TicketController {
     }
 
     // get all tickets in pool
-    @GetMapping("/all/pool")
-    public ResponseEntity<List<Ticket>> getAllTicketsInPool() {
-        List<Ticket> tickets = ticketPool.getAllTicketsInPool();
-        return new ResponseEntity<>(tickets, HttpStatus.OK);
-    }
+//    @GetMapping("/all/pool")
+//    public ResponseEntity<List<Ticket>> getAllTicketsInPool() {
+//        List<Ticket> tickets = ticketPool.getAllTicketsInPool();
+//        return new ResponseEntity<>(tickets, HttpStatus.OK);
+//    }
 
     // ticket count from the pool
     @GetMapping("/count")
@@ -64,9 +64,9 @@ public class TicketController {
     }
 
     // buy tickets by its ID
-    @PutMapping("/buy/{ticketId}")
-    public CompletableFuture<ResponseEntity<Ticket>> buyTicket(@PathVariable Long ticketId) {
-        return ticketService.buyTicket(ticketId)
+    @PutMapping("/buy/{eventId}")
+    public CompletableFuture<ResponseEntity<Ticket>> buyTicket(@PathVariable Long eventId) {
+        return ticketService.buyTicket(eventId)
                 .thenApply(ticket -> new ResponseEntity<>(ticket, HttpStatus.OK));
     }
 

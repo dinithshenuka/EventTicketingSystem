@@ -3,6 +3,8 @@ package lk.ac.iit.EventTicketingSystem.models;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
 
 @Entity(name = "Event")
 
@@ -90,6 +92,19 @@ public class Event {
     public void setEventCode(String eventCode) {
         this.eventCode = eventCode;
     }
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        Event event = (Event) o;
+//        return Objects.equals(eventId, event.eventId);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(eventId);
+//    }
 
     @Override
     public String toString() {

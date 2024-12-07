@@ -2,7 +2,9 @@ package lk.ac.iit.EventTicketingSystem.service;
 
 import lk.ac.iit.EventTicketingSystem.dto.AddTicketDTO;
 import lk.ac.iit.EventTicketingSystem.exception.UserNotFoundException;
+import lk.ac.iit.EventTicketingSystem.models.Event;
 import lk.ac.iit.EventTicketingSystem.models.Ticket;
+import lk.ac.iit.EventTicketingSystem.repository.EventRepo;
 import lk.ac.iit.EventTicketingSystem.repository.TicketRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
     private final TicketRepo ticketRepo;
     private final TicketPool ticketPool;
+    private final EventRepo eventRepo;
 
     @Autowired
-    public TicketService(TicketRepo ticketRepo, TicketPool ticketPool) {
+    public TicketService(TicketRepo ticketRepo, TicketPool ticketPool, EventRepo eventRepo) {
         this.ticketRepo = ticketRepo;
         this.ticketPool = ticketPool;
+        this.eventRepo = eventRepo;
     }
 
     Logger logger = LoggerFactory.getLogger(TicketService.class);
@@ -34,11 +39,15 @@ public class TicketService {
     public CompletableFuture<List<Ticket>> addTicket(AddTicketDTO addTicketDTO) {
         List<Ticket> savedTickets = new ArrayList<>();
         Ticket baseTicket = addTicketDTO.getTicket();
+        Event event = addTicketDTO.getEvent();
+        Long eventId = event.getEventId();
         int ticketCount = addTicketDTO.getTicketCount();
         try {
             for (int loop = 0; loop < ticketCount; loop++) {
 
                 Ticket ticket = new Ticket();
+
+                ticket.setEvent(event); // composition
 
                 ticket.setTicketCode(UUID.randomUUID().toString());
                 ticket.setTicketPrice(baseTicket.getTicketPrice());
@@ -46,12 +55,12 @@ public class TicketService {
                 ticket.setTicketStatus(baseTicket.getTicketStatus());
 
                 ticketRepo.save(ticket); // Save to DB
-                ticketPool.addToTicketPool(ticket); // Add to the pool
+                ticketPool.addToTicketPool(eventId,ticket); // Add to the pool
                 logger.info("Ticket saved to the Database and TicketPool: {}", ticket);
 
-                Thread.sleep(2000);
+                Thread.sleep(1000);
 
-                // for api return
+                // for api return (adding to saved tickets array)
                 savedTickets.add(ticket);
             }
         } catch (InterruptedException e) {
@@ -65,31 +74,36 @@ public class TicketService {
     // method to remove tickets (Customer buy tickets)
     @Async(value = "treadPool")
     @Transactional
-    public CompletableFuture<Ticket> buyTicket(Long ticketId) {
+    public CompletableFuture<Ticket> buyTicket(Long eventId) {
         return CompletableFuture.supplyAsync(() -> {
-            Ticket foundTicket = ticketRepo.findById(ticketId)
-                    .orElseThrow(() -> new UserNotFoundException("Ticket by id " + ticketId + " was not found"));
-            logger.info("Ticket found: {}", foundTicket);
+            Event foundEvent = eventRepo.findById(eventId)
+                    .orElseThrow(() -> new UserNotFoundException("Event by id " + eventId + " was not found"));
+            logger.info("Event found: {}", foundEvent);
+
+            Ticket foundTicket;
+            try {
+                foundTicket = ticketPool.removeFromTicketPool(eventId);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
             synchronized (foundTicket) {
-                if (foundTicket.getTicketStatus().equals("available")) {
-                    foundTicket.setTicketStatus("booked");
+                foundTicket.setTicketStatus("booked");
+                ticketRepo.save(foundTicket);
 
-                    ticketRepo.save(foundTicket);
-                    ticketPool.removeFromTicketPool(foundTicket);
-
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    logger.info("Ticket booked: {}", foundTicket);
-                } else {
-                    throw new IllegalStateException("Ticket is already booked");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Thread was interrupted", e);
                 }
+
+                logger.info("Ticket booked successfully: {}", foundTicket);
+                logger.info("Ticket removed from the pool: {}", foundTicket);
+                logger.info("Ticket status updated in the database: {}", foundTicket);
+
+                return foundTicket;
             }
-            return foundTicket;
         });
     }
 

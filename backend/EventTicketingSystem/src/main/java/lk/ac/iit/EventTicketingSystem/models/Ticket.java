@@ -23,7 +23,7 @@ public class Ticket implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "eventId")
-    private Event event;
+    private Event event;   // Composition
 
     public Ticket() {
     }
