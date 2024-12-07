@@ -33,31 +33,38 @@ public class TicketPool {
         logger.info("Ticket removed from the pool: {}", ticketQueue.peek());
         return ticketQueue.take();
     }
-//
-//    public List<Ticket> getAllTicketsForEvent(Event event) {
-//        BlockingQueue<Ticket> ticketQueue = ticketPoolMap.get(event);
-//        if (ticketQueue == null) {
-//            return List.of();
-//        }
-//        return ticketQueue.stream().collect(Collectors.toList());
-//    }
-//
-//    public int getTicketCountForEvent(Event event) {
-//        BlockingQueue<Ticket> ticketQueue = ticketPoolMap.get(event);
-//        return (ticketQueue != null) ? ticketQueue.size() : 0;
-//    }
-//
-//    public void removeEvent(Event event) {
-//        ticketPoolMap.remove(event);
-//    }
 
+    // get all tickets in the pool
+    public List<Ticket> getAllTicketsInPool() {
+        return ticketPoolMap.values().stream()
+                .flatMap(BlockingQueue::stream)
+                .collect(Collectors.toList());
+    }
+
+    // all for a specific event
+    public List<Ticket> getAllTicketsForEvent(Long eventId) {
+        BlockingQueue<Ticket> ticketQueue = ticketPoolMap.get(eventId);
+        if (ticketQueue == null) {
+            return List.of();
+        }
+        return ticketQueue.stream().collect(Collectors.toList());
+    }
+
+    // get ticket count for a specific event
+    public int getTicketCountForEvent(Long eventId) {
+        BlockingQueue<Ticket> ticketQueue = ticketPoolMap.get(eventId);
+        return (ticketQueue != null) ? ticketQueue.size() : 0;
+    }
+
+    // remove event (call from event controller)
+    public void removeEvent(Long eventId) {
+        ticketPoolMap.remove(eventId);
+    }
+
+    // get ticket count in the pool
     public int getTicketCountInPool() {
         return ticketPoolMap.values().stream()
                 .mapToInt(BlockingQueue::size)
                 .sum();
     }
-
-//    public List<Event> getAllEvents() {
-//        return ticketPoolMap.keySet().stream().collect(Collectors.toList());
-//    }
 }

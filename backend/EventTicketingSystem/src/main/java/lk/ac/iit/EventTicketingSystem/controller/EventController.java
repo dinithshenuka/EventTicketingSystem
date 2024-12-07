@@ -2,6 +2,7 @@ package lk.ac.iit.EventTicketingSystem.controller;
 
 import lk.ac.iit.EventTicketingSystem.models.Event;
 import lk.ac.iit.EventTicketingSystem.service.EventService;
+import lk.ac.iit.EventTicketingSystem.service.TicketPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,12 @@ import java.util.List;
 @RequestMapping("/event")
 public class EventController {
     private final EventService eventService;
+    private final TicketPool ticketPool;
 
     @Autowired
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, TicketPool ticketPool) {
         this.eventService = eventService;
+        this.ticketPool = ticketPool;
     }
 
     @GetMapping("/all")
@@ -46,6 +49,7 @@ public class EventController {
     @DeleteMapping("/delete/{eventId}")
     public ResponseEntity<?> deleteEvent(@PathVariable Long eventId) {
         eventService.deleteEvent(eventId);
+        ticketPool.removeEvent(eventId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

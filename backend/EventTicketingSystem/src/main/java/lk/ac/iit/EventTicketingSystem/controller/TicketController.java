@@ -38,17 +38,31 @@ public class TicketController {
     }
 
     // get all tickets in pool
-//    @GetMapping("/all/pool")
-//    public ResponseEntity<List<Ticket>> getAllTicketsInPool() {
-//        List<Ticket> tickets = ticketPool.getAllTicketsInPool();
-//        return new ResponseEntity<>(tickets, HttpStatus.OK);
-//    }
+    @GetMapping("/all/pool")
+    public ResponseEntity<List<Ticket>> getAllTicketsInPool() {
+        List<Ticket> tickets = ticketPool.getAllTicketsInPool();
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
+    }
 
     // ticket count from the pool
     @GetMapping("/count")
     public ResponseEntity<Integer> getTicketCount() {
         int ticketCount = ticketPool.getTicketCountInPool();
         return new ResponseEntity<>(ticketCount, HttpStatus.OK);
+    }
+
+    // get ticket count for a specific event
+    @GetMapping("/count/{eventId}")
+    public ResponseEntity<Integer> getTicketCountForEvent(@PathVariable Long eventId) {
+        int ticketCount = ticketPool.getTicketCountForEvent(eventId);
+        return new ResponseEntity<>(ticketCount, HttpStatus.OK);
+    }
+
+    // getAllTicketsForEvent in ticket pool
+    @GetMapping("/all/{eventId}")
+    public ResponseEntity<List<Ticket>> getAllTicketsForEvent(@PathVariable Long eventId) {
+        List<Ticket> tickets = ticketPool.getAllTicketsForEvent(eventId);
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
     @GetMapping("/find/{ticketId}")
