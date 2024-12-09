@@ -51,13 +51,17 @@ public class TicketService {
         Long eventId = event.getEventId();
         Vendor vendor = addTicketDTO.getVendor();
 
+        // find event to connect the ticket
+        Event foundEvent = eventRepo.findById(eventId)
+                .orElseThrow(() -> new UserNotFoundException("Event by id " + eventId + " was not found"));
+
         int ticketCount = addTicketDTO.getTicketCount();
         try {
             for (int loop = 0; loop < ticketCount; loop++) {
 
                 Ticket ticket = new Ticket();
 
-                ticket.setEvent(event); // composition
+                ticket.setEvent(foundEvent); // composition
                 ticket.setVendor(vendor); // aggregation
 
                 ticket.setTicketCode(UUID.randomUUID().toString());
