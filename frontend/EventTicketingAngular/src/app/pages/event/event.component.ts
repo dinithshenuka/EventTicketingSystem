@@ -18,7 +18,6 @@ export class EventComponent implements OnInit {
 
   constructor() {
     this.activatedRoute.params.subscribe((res: any) => {
-      debugger;
     });
   }
 

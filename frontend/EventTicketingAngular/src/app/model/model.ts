@@ -33,3 +33,10 @@ export interface Vendor {
     companyAddress: string;
     vendorCode: string;
 }
+
+export interface AddTicketDTO {
+    ticket: Ticket;
+    event: Event;
+    vendor: Vendor;
+    ticketCount: number;
+  }

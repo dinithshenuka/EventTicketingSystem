@@ -1,0 +1,51 @@
+<p>add-tickets works!</p>
+<div class="container">
+    <h2>Add Ticket</h2>
+    
+    <form [formGroup]="addTicketForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="ticketPrice">Ticket Price</label>
+        <input type="number" id="ticketPrice" formControlName="ticketPrice" class="form-control" />
+        <div *ngIf="f['ticketPrice'].touched && f['ticketPrice'].invalid" class="text-danger">
+          <small *ngIf="f['ticketPrice'].errors?.['required']">Ticket Price is required.</small>
+          <small *ngIf="f['ticketPrice'].errors?.['min']">Ticket Price must be at least 1.</small>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="ticketType">Ticket Type</label>
+        <select id="ticketType" formControlName="ticketType" class="form-control">
+          <option value="regular">Regular</option>
+          <option value="VIP">VIP</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="ticketCount">Ticket Count</label>
+        <input type="number" id="ticketCount" formControlName="ticketCount" class="form-control" />
+        <div *ngIf="f['ticketCount'].touched && f['ticketCount'].invalid" class="text-danger">
+          <small *ngIf="f['ticketCount'].errors?.['required']">Ticket Count is required.</small>
+          <small *ngIf="f['ticketCount'].errors?.['min']">Ticket Count must be at least 1.</small>
+          <small *ngIf="f['ticketCount'].errors?.['max']">Ticket Count must be less than or equal to 100.</small>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="event">Event</label>
+        <select id="event" formControlName="event" class="form-control">
+          <option *ngFor="let event of events" [value]="event.eventId">{{ event.eventName }}</option>
+        </select>
+        <div *ngIf="f['event'].touched && f['event'].invalid" class="text-danger">
+          <small *ngIf="f['event'].errors?.['required']">Event selection is required.</small>
+        </div>
+      </div>
+  
+      <button type="submit" class="btn btn-primary" [disabled]="addTicketForm.invalid">Add Ticket</button>
+    </form>
+  
+    <div *ngIf="successMessage" class="alert alert-success mt-4">
+      <p>{{ successMessage }}</p>
+      <p *ngIf="previewTicket">Preview: {{ previewTicket.ticketType }} - {{ previewTicket.ticketPrice }} - {{ previewTicket.ticketCode }}</p>
+      <button class="btn btn-secondary" (click)="addMoreTickets()">Add More Tickets</button>
+    </div>
+  </div>
