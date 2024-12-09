@@ -17,13 +17,19 @@ public class Ticket implements Serializable {
     @Column(nullable = false, updatable = false)
     private String ticketCode;
 
+
+    // relations
     @ManyToOne
     @JoinColumn(name = "vendorId")
-    private Vendor vendor;
+    private Vendor vendor; //aggregation
 
     @ManyToOne
     @JoinColumn(name = "eventId")
     private Event event;   // Composition
+
+    @ManyToOne
+    @JoinColumn(name = "customerId")
+    private Customer customer;
 
     public Ticket() {
     }
@@ -99,6 +105,14 @@ public class Ticket implements Serializable {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Override

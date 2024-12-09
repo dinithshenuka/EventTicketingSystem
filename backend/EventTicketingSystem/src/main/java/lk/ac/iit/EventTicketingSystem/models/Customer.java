@@ -3,6 +3,7 @@ package lk.ac.iit.EventTicketingSystem.models;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity(name = "Customer")
 public class Customer implements Serializable {
@@ -15,6 +16,9 @@ public class Customer implements Serializable {
     private String phone;
     @Column(nullable = false, updatable = false)
     private String customerCode;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Ticket> tickets;
 
     public Customer() {
     }

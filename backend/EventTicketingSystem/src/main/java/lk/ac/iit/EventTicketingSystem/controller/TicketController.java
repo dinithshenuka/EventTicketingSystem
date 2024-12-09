@@ -1,6 +1,7 @@
 package lk.ac.iit.EventTicketingSystem.controller;
 
 import lk.ac.iit.EventTicketingSystem.dto.AddTicketDTO;
+import lk.ac.iit.EventTicketingSystem.dto.BuyTicketDTO;
 import lk.ac.iit.EventTicketingSystem.models.Ticket;
 import lk.ac.iit.EventTicketingSystem.service.TicketPool;
 import lk.ac.iit.EventTicketingSystem.service.TicketService;
@@ -77,11 +78,12 @@ public class TicketController {
         return new ResponseEntity<>(updatedTicket, HttpStatus.OK);
     }
 
-    // buy tickets by its ID
+    // buy tickets by its Event ID
     @PutMapping("/buy/{eventId}")
-    public CompletableFuture<ResponseEntity<Ticket>> buyTicket(@PathVariable Long eventId) {
-        return ticketService.buyTicket(eventId)
-                .thenApply(ticket -> new ResponseEntity<>(ticket, HttpStatus.OK));
+    public CompletableFuture<ResponseEntity<List<Ticket>>> buyTicket(@PathVariable Long eventId, @RequestBody BuyTicketDTO buyTicketDTO) {
+        return ticketService.buyTicket(eventId, buyTicketDTO)
+                .thenApply(ResponseEntity::getBody)
+                .thenApply(tickets -> new ResponseEntity<>(tickets, HttpStatus.OK));
     }
 
     @DeleteMapping("/delete/{ticketId}")
