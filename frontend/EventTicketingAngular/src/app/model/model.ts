@@ -1,3 +1,5 @@
+import e from "express";
+
 export interface Event {
     eventId: number;
     eventName: string;
@@ -14,7 +16,7 @@ export interface Customer {
     email: string;
     phone: string;
     customerCode: string;
-} 
+}
 
 export interface Ticket {
     ticketId: number;
@@ -39,4 +41,9 @@ export interface AddTicketDTO {
     event: Event;
     vendor: Vendor;
     ticketCount: number;
-  }
+}
+
+export interface BuyTicketDTO {
+    customer: Customer;
+    ticketCount: number;
+}

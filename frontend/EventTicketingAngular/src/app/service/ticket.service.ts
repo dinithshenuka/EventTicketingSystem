@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AddTicketDTO, Ticket } from '../model/model';
+import { AddTicketDTO, BuyTicketDTO, Ticket } from '../model/model';
 
 @Injectable({
   providedIn: 'root'
@@ -58,9 +58,9 @@ export class TicketService {
   }
 
   // buy ticket by event id 
-  public buyTicket(eventId: number): Observable<Ticket> {
-    return this.http.put<Ticket>(`${this.apiUrl}buy/${eventId}`, {});
-  }
+  public buyTicket(eventId: number, buyTicketDTO: BuyTicketDTO): Observable<Ticket> {
+    return this.http.put<Ticket>(`${this.apiUrl}buy/${eventId}`, buyTicketDTO);
+}
 
   // delete ticket
   public deleteTicket(ticketId: number): Observable<void> {

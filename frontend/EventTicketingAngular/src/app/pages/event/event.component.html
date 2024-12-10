@@ -7,7 +7,7 @@
     <p><strong>Code:</strong> {{ eventData.eventCode }}</p>
 
     <!-- buy tickets button navigate to booking component-->
-    <button class="btn btn-primary" routerLink="/booking" >Buy Tickets</button>
+    <button class="btn btn-primary" [routerLink]="['/buy-tickets', eventData.eventId]">Buy Tickets</button>
 </div>
 <div *ngIf="!eventData">
     <p>Loading event details...</p>

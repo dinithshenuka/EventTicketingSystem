@@ -28,7 +28,7 @@ export const routes: Routes = [
         component: AddTicketsComponent
     },
     {
-        path:'buy-tickets',
+        path: 'buy-tickets/:eventid',
         component: BuyTicketsComponent
     }
 
