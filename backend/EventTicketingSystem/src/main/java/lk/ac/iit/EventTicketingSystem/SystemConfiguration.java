@@ -1,51 +1,113 @@
 package lk.ac.iit.EventTicketingSystem;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import com.google.gson.Gson;
+import org.springframework.stereotype.Component;
 
-import java.util.concurrent.Executor;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
-@Configuration
-@EnableAsync
-public class SystemConfiguration {
-    private int totalTicketsInPool = 500;
+@Component
+public class SystemConfiguration implements Serializable {
+    private int totalTickets;
     private int ticketReleaseRate;
     private int customerRetrievalRate;
-    private int maxTicketPoolCapacity = 600;
+    private int maxTicketCapacity;
 
     public SystemConfiguration() {
     }
 
-    public SystemConfiguration(int totalTicketsInPool, int ticketReleaseRate, int customerRetrievalRate, int maxTicketPoolCapacity) {
-        this.totalTicketsInPool = totalTicketsInPool;
+    public SystemConfiguration(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketCapacity) {
+        this.totalTickets = totalTickets;
         this.ticketReleaseRate = ticketReleaseRate;
         this.customerRetrievalRate = customerRetrievalRate;
-        this.maxTicketPoolCapacity = maxTicketPoolCapacity;
+        this.maxTicketCapacity = maxTicketCapacity;
     }
 
-    // thread pool config
-    @Bean(name="treadPool")
-    public Executor taskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
-        executor.setMaxPoolSize(2);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("userThread-");
-        executor.initialize();
-        return executor;
+    // method to get input and validate
+    public static void getConfigInputs(SystemConfiguration systemConfiguration) {
+        Scanner input = new Scanner(System.in);
+        System.out.println("\n=== Ticket System Configuration ===");
+
+        // total number of tickets
+        while (true) {
+            try {
+                System.out.print("Enter Total Tickets: ");
+                int newTotalTickets = input.nextInt();
+                systemConfiguration.setTotalTickets(newTotalTickets);
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Please enter a integer value greater than 0");
+                input.next();
+            }
+        }
+
+        // ticket release rate
+        while (true) {
+            try {
+                System.out.print("Enter Ticket Release Rate: ");
+                int newTicketReleaseRate = input.nextInt();
+                systemConfiguration.setTicketReleaseRate(newTicketReleaseRate);
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Please enter a integer value greater than 0");
+                input.next();
+            }
+        }
+
+        // customer retrieval rate
+        while (true) {
+            try {
+                System.out.print("Enter Customer Retrieval Rate: ");
+                int newCustomerRetrievalRate = input.nextInt();
+                systemConfiguration.setCustomerRetrievalRate(newCustomerRetrievalRate);
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Please enter a integer value greater than 0");
+                input.next();
+            }
+        }
+
+        // Max Ticket Capacity
+        while (true) {
+            try {
+                System.out.print("Enter Max Ticket Capacity: ");
+                int newMaxTicketCapacity = input.nextInt();
+                systemConfiguration.setMaxTicketCapacity(newMaxTicketCapacity);
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Please enter a integer value greater than 0");
+                input.next();
+            }
+        }
+    }
+
+    // save object
+    public static void saveConfiguration(SystemConfiguration config, String filePath) throws IOException {
+        Gson gson = new Gson();
+        String json = gson.toJson(config);
+
+        // Write JSON string to file
+        FileWriter writer = new FileWriter(filePath);
+        writer.write(json);
+        writer.close();
+
+        System.out.println("Configuration saved successfully to: " + filePath);
     }
 
 
-    // getters and setters
 
-    public int getTotalTicketsInPool() {
-        return totalTicketsInPool;
+
+    //getters and setters
+
+    public int getTotalTickets() {
+        return totalTickets;
     }
 
-    public void setTotalTicketsInPool(int totalTicketsInPool) {
-        this.totalTicketsInPool = totalTicketsInPool;
+    public void setTotalTickets(int totalTickets) {
+        this.totalTickets = totalTickets;
     }
 
     public int getTicketReleaseRate() {
@@ -64,21 +126,22 @@ public class SystemConfiguration {
         this.customerRetrievalRate = customerRetrievalRate;
     }
 
-    public int getMaxTicketPoolCapacity() {
-        return maxTicketPoolCapacity;
+    public int getMaxTicketCapacity() {
+        return maxTicketCapacity;
     }
 
-    public void setMaxTicketPoolCapacity(int maxTicketPoolCapacity) {
-        this.maxTicketPoolCapacity = maxTicketPoolCapacity;
+    public void setMaxTicketCapacity(int maxTicketCapacity) {
+        this.maxTicketCapacity = maxTicketCapacity;
     }
+
 
     @Override
     public String toString() {
-        return "SystemConfiguration{" +
-                "totalTicketsInPool=" + totalTicketsInPool +
+        return "Configuration{" +
+                "totalTickets=" + totalTickets +
                 ", ticketReleaseRate=" + ticketReleaseRate +
                 ", customerRetrievalRate=" + customerRetrievalRate +
-                ", maxTicketPoolCapacity=" + maxTicketPoolCapacity +
+                ", maxTicketCapacity=" + maxTicketCapacity +
                 '}';
     }
 }

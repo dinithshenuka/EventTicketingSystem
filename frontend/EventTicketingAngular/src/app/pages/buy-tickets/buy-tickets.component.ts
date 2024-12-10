@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TicketService } from '../../service/ticket.service';
+import { WebSocketService } from '../../service/web-socket.service';
+import { Subscription } from 'rxjs';
 import { BuyTicketDTO } from '../../model/model';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -13,15 +15,18 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './buy-tickets.component.html',
   styleUrls: ['./buy-tickets.component.css']
 })
-export class BuyTicketsComponent implements OnInit {
+export class BuyTicketsComponent implements OnInit, OnDestroy {
   ticketForm!: FormGroup;
   successMessage: string = '';
   eventId!: number;
+  availableTickets: number = 0;
+  private wsSubscription!: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private ticketService: TicketService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -31,6 +36,28 @@ export class BuyTicketsComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern(/^\d{3}-\d{3}-\d{4}$/)]],
       quantity: [null, [Validators.required, Validators.min(1)]]
+    });
+
+    this.fetchTicketCount();
+
+    // Subscribe to WebSocket updates
+    this.wsSubscription = this.webSocketService.getMessages().subscribe((message: string) => {
+      const parsedMessage = JSON.parse(message);
+      if (parsedMessage.type === 'TICKET_UPDATE' && parsedMessage.eventId === this.eventId) {
+        this.fetchTicketCount();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.wsSubscription) {
+      this.wsSubscription.unsubscribe();
+    }
+  }
+
+  fetchTicketCount(): void {
+    this.ticketService.ticketCountForEvent(this.eventId).subscribe(count => {
+      this.availableTickets = count;
     });
   }
 
@@ -61,6 +88,7 @@ export class BuyTicketsComponent implements OnInit {
         console.log('Buy ticket response:', response);
         this.successMessage = 'Thank you for buying tickets!';
         this.ticketForm.reset();
+        this.fetchTicketCount(); // Update the ticket count after purchase
       },
       (error) => {
         console.error('Error:', error);

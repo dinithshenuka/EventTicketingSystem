@@ -1,1 +1,56 @@
-<p>admin works!</p>
+<div>
+    <button (click)="toggleStartStop()">
+      {{ isRunning ? 'Stop' : 'Start' }}
+    </button>
+  </div>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  
+  <div class="container">
+    <div *ngIf="!isLoaded" class="text-center">
+      <p>Fetching data from the server. Please wait!</p>
+    </div>
+    <div *ngIf="isLoaded">
+      <div class="row">
+        <div class="col-md-8">
+          <h2>Real-Time Tickets Details</h2>
+          <div *ngIf="tickets.length === 0" class="alert alert-info">
+            No tickets available.
+          </div>
+          <table *ngIf="tickets.length > 0" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Event Name</th>
+                <th>Vendor ID</th>
+                <th>Ticket Status</th>
+                <th>Customer ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ticket of tickets">
+                <td>{{ ticket.ticketId }}</td>
+                <td>{{ ticket.event.eventName }}</td>
+                <td>{{ ticket.vendor.vendorId }}</td>
+                <td>{{ ticket.ticketStatus }}</td>
+                <td>{{ ticket.customer?.customerId }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-md-4">
+          <h2>Vendor List</h2>
+          <div *ngIf="vendors.length === 0" class="alert alert-info">
+            No vendors available.
+          </div>
+          <ul *ngIf="vendors.length > 0" class="list-group">
+            <li *ngFor="let vendor of vendors" class="list-group-item">
+              Vendor Name: {{ vendor.vendorName }}, ID: {{ vendor.vendorId }}, Company: {{ vendor.companyName }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>

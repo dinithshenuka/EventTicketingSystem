@@ -7,7 +7,6 @@ import lk.ac.iit.EventTicketingSystem.models.Customer;
 import lk.ac.iit.EventTicketingSystem.models.Event;
 import lk.ac.iit.EventTicketingSystem.models.Ticket;
 import lk.ac.iit.EventTicketingSystem.models.Vendor;
-import lk.ac.iit.EventTicketingSystem.repository.EventRepo;
 import lk.ac.iit.EventTicketingSystem.repository.TicketRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,21 +26,19 @@ import java.util.stream.Collectors;
 public class TicketService {
     private final TicketRepo ticketRepo;
     private final TicketPool ticketPool;
-    private final EventRepo eventRepo;
     private final CustomerService customerService;
 
     @Autowired
-    public TicketService(TicketRepo ticketRepo, TicketPool ticketPool, EventRepo eventRepo, CustomerService customerService) {
+    public TicketService(TicketRepo ticketRepo, TicketPool ticketPool, CustomerService customerService) {
         this.ticketRepo = ticketRepo;
         this.ticketPool = ticketPool;
-        this.eventRepo = eventRepo;
         this.customerService = customerService;
     }
 
     Logger logger = LoggerFactory.getLogger(TicketService.class);
 
     // method to add tickets (Vendor add tickets)
-    @Async(value = "treadPool")
+    @Async(value = "VendorThreadPool")
     public CompletableFuture<List<Ticket>> addTicket(AddTicketDTO addTicketDTO) {
 
         List<Ticket> savedTickets = new ArrayList<>();
@@ -50,10 +47,10 @@ public class TicketService {
         Event event = addTicketDTO.getEvent();
         Long eventId = event.getEventId();
         Vendor vendor = addTicketDTO.getVendor();
+        Long vendorId = vendor.getVendorId();
 
-        // find event to connect the ticket
-        Event foundEvent = eventRepo.findById(eventId)
-                .orElseThrow(() -> new UserNotFoundException("Event by id " + eventId + " was not found"));
+        logger.info("Thread {} is allocated to Vendor {}",
+                Thread.currentThread().getName().replaceAll("\\D+", ""), vendorId);
 
         int ticketCount = addTicketDTO.getTicketCount();
         try {
@@ -61,7 +58,7 @@ public class TicketService {
 
                 Ticket ticket = new Ticket();
 
-                ticket.setEvent(foundEvent); // composition
+                ticket.setEvent(event); // composition
                 ticket.setVendor(vendor); // aggregation
 
                 ticket.setTicketCode(UUID.randomUUID().toString());
@@ -71,7 +68,7 @@ public class TicketService {
 
                 ticketRepo.save(ticket); // Save to DB
                 ticketPool.addToTicketPool(eventId,ticket); // Add to the pool
-                logger.info("Ticket saved to the Database and TicketPool: {}", ticket);
+                logger.info("Ticket saved to the Database");
 
                 Thread.sleep(1000);
 
@@ -87,10 +84,10 @@ public class TicketService {
     }
 
     // method to remove tickets (Customer buy tickets
-    @Async(value = "treadPool")
+    @Async(value = "CustomerThreadPool")
     @Transactional
     public CompletableFuture<ResponseEntity<List<Ticket>>> buyTicket(Long eventId, BuyTicketDTO buyTicketDTO) {
-//        Customer customer = buyTicketDTO.getCustomer(); should remove this line
+
         int ticketCount = buyTicketDTO.getTicketCount();
 
         Customer customer = customerService.findOrAddCustomer(
@@ -98,6 +95,9 @@ public class TicketService {
                 buyTicketDTO.getCustomer().getEmail(),
                 buyTicketDTO.getCustomer().getPhone()
         );
+
+        logger.info("Thread {} is allocated to Customer {}",
+                Thread.currentThread().getName().replaceAll("\\D+", ""), customer.getCustomerId());
 
         // Validate ticket count upfront
         int availableTickets = ticketPool.getTicketCountForEvent(eventId);
@@ -122,12 +122,12 @@ public class TicketService {
                 ticketRepo.save(ticket);
 
                 bookedTickets.add(ticket);
-                logger.info("Ticket booked successfully: {}", ticket);
+                logger.info("Ticket booked successfully: {}", ticket.getTicketId());
 
                 Thread.sleep(1000);
             }
 
-            logger.info("All requested tickets booked successfully for customer: {}", customer);
+            logger.info("All requested tickets booked successfully for customer: {}", customer.getCustomerId());
         } catch (Exception e) {
             logger.error("Error occurred while booking tickets for customer: {}", customer, e);
             throw new RuntimeException("Failed to book tickets. Transaction rolled back.", e);
