@@ -20,7 +20,6 @@ export class EventPageComponent implements OnInit {
   }
 
   getEvents(): void {
-    debugger;
     this.eventService.getAllEvents().subscribe({
       next:(data) => {
         this.eventList = Array.isArray(data) ? data : [];

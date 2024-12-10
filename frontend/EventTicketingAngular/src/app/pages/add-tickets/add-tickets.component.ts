@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Ticket, Event, AddTicketDTO, Vendor } from '../../model/model';
 import { TicketService } from '../../service/ticket.service';
 import { EventService } from '../../service/event.service';
+import { VendorService } from '../../service/vendor.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -16,7 +18,8 @@ import { CommonModule } from '@angular/common';
 export class AddTicketsComponent implements OnInit {
   addTicketForm!: FormGroup;
   events: Event[] = [];
-  vendors: Vendor[] = [];
+  vendor!: Vendor;
+  vendorId!: number;
   submitted = false;
   successMessage: string = '';
   previewTicket: Ticket | null = null;
@@ -24,10 +27,13 @@ export class AddTicketsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ticketService: TicketService,
-    private eventService: EventService
+    private eventService: EventService,
+    private vendorService: VendorService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.vendorId = this.route.snapshot.params['vendorId'];
     this.addTicketForm = this.fb.group({
       ticketPrice: [null, [Validators.required, Validators.min(1)]],
       ticketType: ['regular', [Validators.required]],
@@ -35,13 +41,26 @@ export class AddTicketsComponent implements OnInit {
       event: [null, [Validators.required]]
     });
 
+    this.loadVendorDetails();
     this.loadEvents();
   }
 
-  loadEvents(): void {
-    this.eventService.getAllEvents().subscribe(events => {
-      this.events = events;
+  loadVendorDetails(): void {
+    this.vendorService.getVendorById(this.vendorId).subscribe(vendor => {
+      this.vendor = vendor;
     });
+  }
+
+  loadEvents(): void {
+    this.eventService.getAllEvents().subscribe(
+      events => {
+        this.events = events;
+        console.log('Event List:', this.events); // Log event list for debugging
+      },
+      error => {
+        console.error('Error fetching events:', error);
+      }
+    );
   }
 
   get f() {
@@ -50,11 +69,21 @@ export class AddTicketsComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-
+  
     if (this.addTicketForm.invalid) {
       return;
     }
-
+  
+    // Log the value of the event form control
+    console.log('Selected event ID from form:', this.addTicketForm.value.event);
+  
+    const selectedEvent = this.events.find(event => event.eventId === +this.addTicketForm.value.event);
+  
+    if (!selectedEvent) {
+      console.error('Selected event not found');
+      return;
+    }
+  
     const ticketData: AddTicketDTO = {
       ticket: {
         ticketId: 0,
@@ -63,34 +92,21 @@ export class AddTicketsComponent implements OnInit {
         ticketStatus: 'available',
         ticketCode: '',
       },
-      event: {
-        eventId: this.addTicketForm.value.event,
-        eventName: '',
-        eventLocation: '',
-        eventDate: '',
-        eventTime:'',
-        eventCode:'',
-        eventImgUrl: '',
-      },
-      vendor: {
-        vendorId: this.addTicketForm.value.vendor,
-        firstName: '',
-        email: '',
-        phone: '',
-        companyName: '',
-        companyAddress: '',
-        vendorCode: '',
-      },
+      event: selectedEvent,
+      vendor: this.vendor,
       ticketCount: this.addTicketForm.value.ticketCount
     };
-
+  
+    console.log('Submitting ticket data:', ticketData); // Log ticket data for debugging
+  
     this.ticketService.addTicket(ticketData).subscribe(
-      (response) => {
+      response => {
         this.successMessage = 'Ticket added successfully!';
         this.previewTicket = response; // Show preview of submitted ticket
         this.addTicketForm.reset();
       },
-      (error) => {
+      error => {
+        console.error('Error adding ticket:', error);
         this.successMessage = 'An error occurred while adding the ticket.';
       }
     );

@@ -18,6 +18,9 @@
           <option value="regular">Regular</option>
           <option value="VIP">VIP</option>
         </select>
+        <div *ngIf="f['ticketType'].touched && f['ticketType'].invalid" class="text-danger">
+          <small *ngIf="f['ticketType'].errors?.['required']">Ticket Type is required.</small>
+        </div>
       </div>
   
       <div class="form-group">
@@ -48,4 +51,4 @@
       <p *ngIf="previewTicket">Preview: {{ previewTicket.ticketType }} - {{ previewTicket.ticketPrice }} - {{ previewTicket.ticketCode }}</p>
       <button class="btn btn-secondary" (click)="addMoreTickets()">Add More Tickets</button>
     </div>
-  </div>
+</div>

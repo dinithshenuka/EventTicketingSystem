@@ -28,7 +28,7 @@ export interface Ticket {
 
 export interface Vendor {
     vendorId: number;
-    firstName: string;
+    vendorName: string;
     email: string;
     phone: string;
     companyName: string;

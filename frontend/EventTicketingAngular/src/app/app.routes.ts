@@ -4,6 +4,7 @@ import { EventComponent } from './pages/event/event.component';
 import { EventPageComponent } from './pages/event-page/event-page.component';
 import { AddTicketsComponent } from './pages/add-tickets/add-tickets.component';
 import { BuyTicketsComponent } from './pages/buy-tickets/buy-tickets.component';
+import { AddVendorComponent } from './pages/add-vendor/add-vendor.component';
 
 export const routes: Routes = [
     {
@@ -24,13 +25,15 @@ export const routes: Routes = [
         component: EventPageComponent
     },
     {
-        path: 'add-tickets',
+        path: 'add-tickets/:vendorId',
         component: AddTicketsComponent
     },
     {
         path: 'buy-tickets/:eventid',
         component: BuyTicketsComponent
+    },
+    {
+        path: 'add-vendor',
+        component: AddVendorComponent
     }
-
-
 ];

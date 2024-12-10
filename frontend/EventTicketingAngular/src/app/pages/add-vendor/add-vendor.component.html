@@ -1,0 +1,56 @@
+<p>add-vendor works!</p>
+<div class="container">
+    <h2>Add Vendor</h2>
+    
+    <form [formGroup]="vendorForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="vendorName">Vendor Name</label> 
+        <input type="text" id="vendorName" formControlName="vendorName" class="form-control" /> <!-- Change this line -->
+        <div *ngIf="f['vendorName'].touched && f['vendorName'].invalid" class="text-danger"> <!-- Change this line -->
+          <small *ngIf="f['vendorName'].errors?.['required']">Vendor Name is required.</small> <!-- Change this line -->
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" class="form-control" />
+        <div *ngIf="f['email'].touched && f['email'].invalid" class="text-danger">
+          <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
+          <small *ngIf="f['email'].errors?.['email']">Email must be a valid email address.</small>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" formControlName="phone" class="form-control" />
+        <div *ngIf="f['phone'].touched && f['phone'].invalid" class="text-danger">
+          <small *ngIf="f['phone'].errors?.['required']">Phone is required.</small>
+          <small *ngIf="f['phone'].errors?.['pattern']">Phone must be a valid phone number.</small>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="companyName">Company Name</label>
+        <input type="text" id="companyName" formControlName="companyName" class="form-control" />
+        <div *ngIf="f['companyName'].touched && f['companyName'].invalid" class="text-danger">
+          <small *ngIf="f['companyName'].errors?.['required']">Company Name is required.</small>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="companyAddress">Company Address</label>
+        <input type="text" id="companyAddress" formControlName="companyAddress" class="form-control" />
+        <div *ngIf="f['companyAddress'].touched && f['companyAddress'].invalid" class="text-danger">
+          <small *ngIf="f['companyAddress'].errors?.['required']">Company Address is required.</small>
+        </div>
+      </div>
+  
+      <button type="submit" class="btn btn-primary" [disabled]="vendorForm.invalid">Add Vendor</button>
+    </form>
+  
+    <div *ngIf="vendorId" class="alert alert-success mt-4">
+      <p>{{ successMessage }}</p>
+      <p>Signup complete. Do you want to add tickets now?</p>
+      <button class="btn btn-secondary" (click)="navigateToAddTickets()">Add Tickets</button>
+    </div>
+</div>
