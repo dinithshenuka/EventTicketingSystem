@@ -15,7 +15,17 @@ public class EventTicketingSystemApplication implements CommandLineRunner {
 	private SystemConfiguration systemConfiguration;
 
 	public static void main(String[] args) {
-		SpringApplication.run(EventTicketingSystemApplication.class, args);
+
+		SystemConfiguration systemConfiguration = new SystemConfiguration();
+		SystemConfiguration.getConfigInputs(systemConfiguration);
+
+        try {
+            SystemConfiguration.saveConfiguration(systemConfiguration,"Configuration.json");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        SpringApplication.run(EventTicketingSystemApplication.class, args);
 	}
 
 	@Override

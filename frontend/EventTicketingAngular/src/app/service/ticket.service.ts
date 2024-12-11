@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AddTicketDTO, BuyTicketDTO, Ticket } from '../model/model';
+import { AddTicketDTO, AllTickets, BuyTicketDTO, Ticket } from '../model/model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,6 @@ export class TicketService {
   // Get all tickets (Database and pool)
   public getAllTickets(): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(`${this.apiUrl}all`);
-  }
 
   // Get ticket by id
   public getTicketById(ticketId: number): Observable<Ticket> {
@@ -66,8 +65,5 @@ export class TicketService {
   public deleteTicket(ticketId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}delete/${ticketId}`);
   }
-
-
-  
 
 }

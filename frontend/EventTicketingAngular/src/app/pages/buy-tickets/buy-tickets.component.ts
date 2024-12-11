@@ -16,9 +16,10 @@ import { takeUntil, switchMap } from 'rxjs/operators';
   styleUrls: ['./buy-tickets.component.css']
 })
 export class BuyTicketsComponent implements OnInit, OnDestroy {
+
   private destroy$ = new Subject<void>();
   private readonly platformId = inject(PLATFORM_ID);
-
+  
   ticketForm!: FormGroup;
   eventData: any;
   ticketCount: number = 0;
@@ -27,6 +28,8 @@ export class BuyTicketsComponent implements OnInit, OnDestroy {
   successMessage: string = '';
   errorMessage: string = '';
   eventId!: number;
+  availableTickets: number = 0;
+  private wsSubscription!: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -52,6 +55,28 @@ export class BuyTicketsComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern(/^\d{3}-\d{3}-\d{4}$/)]],
       quantity: [1, [Validators.required, Validators.min(1)]]
+    });
+
+    this.fetchTicketCount();
+
+    // Subscribe to WebSocket updates
+    this.wsSubscription = this.webSocketService.getMessages().subscribe((message: string) => {
+      const parsedMessage = JSON.parse(message);
+      if (parsedMessage.type === 'TICKET_UPDATE' && parsedMessage.eventId === this.eventId) {
+        this.fetchTicketCount();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.wsSubscription) {
+      this.wsSubscription.unsubscribe();
+    }
+  }
+
+  fetchTicketCount(): void {
+    this.ticketService.ticketCountForEvent(this.eventId).subscribe(count => {
+      this.availableTickets = count;
     });
   }
 

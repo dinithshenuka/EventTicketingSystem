@@ -112,9 +112,9 @@ public class SystemConfiguration implements Serializable {
         this.customerRetrievalRate = systemConfiguration.getCustomerRetrievalRate();
         this.maxTicketCapacity = systemConfiguration.getMaxTicketCapacity();
         return this;
-    }
 
-    // Getters and setters
+    //getters and setters
+
     public int getTotalTickets() {
         return totalTickets;
     }
@@ -139,10 +139,6 @@ public class SystemConfiguration implements Serializable {
         this.customerRetrievalRate = customerRetrievalRate;
     }
 
-    public int getMaxTicketCapacity() {
-        return maxTicketCapacity;
-    }
-
     public void setMaxTicketCapacity(int maxTicketCapacity) {
         this.maxTicketCapacity = maxTicketCapacity;
     }
@@ -154,7 +150,7 @@ public class SystemConfiguration implements Serializable {
 
     public void setRunning(boolean running) {
         this.running = running;
-    }
+
 
     @Override
     public String toString() {

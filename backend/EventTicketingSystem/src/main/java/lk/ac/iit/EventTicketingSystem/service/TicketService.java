@@ -1,4 +1,3 @@
-// src/main/java/lk/ac/iit/EventTicketingSystem/service/TicketService.java
 package lk.ac.iit.EventTicketingSystem.service;
 
 import lk.ac.iit.EventTicketingSystem.SystemConfiguration;
@@ -51,6 +50,7 @@ public class TicketService {
         Ticket baseTicket = addTicketDTO.getTicket();
         Event event = addTicketDTO.getEvent();
         Vendor vendor = addTicketDTO.getVendor();
+        Long vendorId = vendor.getVendorId();
 
         logger.info("Thread {} is allocated to Vendor {}",
                 Thread.currentThread().getName().replaceAll("\\D+", ""), vendor.getVendorId());
@@ -61,16 +61,19 @@ public class TicketService {
         try {
             for (int loop = 0; loop < ticketCount; loop++) {
                 Ticket ticket = new Ticket();
-                ticket.setEvent(event);
-                ticket.setVendor(vendor);
+
+                ticket.setEvent(event);  // composition
+                ticket.setVendor(vendor); // aggregation
+
                 ticket.setTicketCode(UUID.randomUUID().toString());
                 ticket.setTicketPrice(baseTicket.getTicketPrice());
                 ticket.setTicketType(baseTicket.getTicketType());
                 ticket.setTicketStatus("available");
 
-                ticketRepo.save(ticket);
-                ticketPool.addToTicketPool(event.getEventId(), ticket);
+                ticketRepo.save(ticket); // DB
+                ticketPool.addToTicketPool(event.getEventId(), ticket); // Add to pool
                 logger.info("Ticket saved to the Database");
+
 
                 Thread.sleep(1000L * systemConfiguration.getTicketReleaseRate());
             }

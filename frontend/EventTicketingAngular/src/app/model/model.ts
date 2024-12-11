@@ -16,6 +16,17 @@ export interface Customer {
     customerCode: string;
 }
 
+export interface AllTickets {
+    ticketId: number;
+    ticketPrice: number;
+    ticketType: string;
+    ticketStatus: string;
+    ticketCode: string;
+    vendor: Vendor;
+    event: Event;
+    customer: Customer | null;
+}
+
 export interface Ticket {
     ticketId: number;
     ticketPrice: number;
@@ -32,6 +43,13 @@ export interface Vendor {
     companyName: string;
     companyAddress: string;
     vendorCode: string;
+}
+
+export interface Admin {
+    totalTickets: number;
+    ticketReleaseRate: number;
+    customerRetrievalRate: number;
+    maxTicketCapacity: number;
 }
 
 export interface AddTicketDTO {

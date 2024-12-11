@@ -13,8 +13,9 @@ import { Configurations } from '../../model/model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin.component.html',
-  styleUrl: './admin.component.css'
+  styleUrls: ['./admin.component.css']
 })
+
 export class AdminComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private readonly platformId = inject(PLATFORM_ID);
@@ -126,5 +127,5 @@ export class AdminComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
+}
 }
