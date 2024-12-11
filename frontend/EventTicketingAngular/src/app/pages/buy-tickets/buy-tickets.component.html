@@ -1,44 +1,115 @@
-<p>buy-tickets works!</p>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <!-- Event Details Card -->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">{{eventData?.eventName}}</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Date:</strong> {{eventData?.eventDate}}</p>
+              <p><strong>Time:</strong> {{eventData?.eventTime}}</p>
+            </div>
+            <div class="col-md-6 text-end">
+              <p><strong>Available Tickets:</strong></p>
+              <h4 class="text-primary">{{ticketCount}}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
 
-// form to get customer information and ticket quantity
-<p>buy-tickets works!</p>
+      <!-- Booking Form -->
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title mb-4">Book Tickets</h4>
 
-<form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
-  <div class="form-group">
-    <label for="name">Name</label>
-    <input type="text" class="form-control" id="name" formControlName="name">
-    <div *ngIf="f['name'].touched && f['name'].invalid" class="text-danger">
-      <small *ngIf="f['name'].errors?.['required']">Name is required.</small>
-      <small *ngIf="f['name'].errors?.['minlength']">Name must be at least 2 characters long.</small>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input type="email" class="form-control" id="email" formControlName="email">
-    <div *ngIf="f['email'].touched && f['email'].invalid" class="text-danger">
-      <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
-      <small *ngIf="f['email'].errors?.['email']">Email must be a valid email address.</small>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="phone">Phone</label>
-    <input type="text" class="form-control" id="phone" formControlName="phone">
-    <div *ngIf="f['phone'].touched && f['phone'].invalid" class="text-danger">
-      <small *ngIf="f['phone'].errors?.['required']">Phone is required.</small>
-      <small *ngIf="f['phone'].errors?.['pattern']">Phone must be in the format 123-456-7890.</small>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="quantity">Quantity</label>
-    <input type="number" class="form-control" id="quantity" formControlName="quantity">
-    <div *ngIf="f['quantity'].touched && f['quantity'].invalid" class="text-danger">
-      <small *ngIf="f['quantity'].errors?.['required']">Quantity is required.</small>
-      <small *ngIf="f['quantity'].errors?.['min']">Quantity must be at least 1.</small>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+          @if(isLoading) {
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          } @else {
+          <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" formControlName="name"
+                [class.is-invalid]="f['name'].touched && f['name'].invalid">
+              <div class="invalid-feedback" *ngIf="f['name'].touched && f['name'].invalid">
+                <div *ngIf="f['name'].errors?.['required']">Name is required</div>
+                <div *ngIf="f['name'].errors?.['minlength']">Name must be at least 2 characters</div>
+              </div>
+            </div>
 
-<div *ngIf="successMessage" class="alert alert-success mt-4">
-  <p>{{ successMessage }}</p>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" formControlName="email"
+                [class.is-invalid]="f['email'].touched && f['email'].invalid">
+              <div class="invalid-feedback" *ngIf="f['email'].touched && f['email'].invalid">
+                <div *ngIf="f['email'].errors?.['required']">Email is required</div>
+                <div *ngIf="f['email'].errors?.['email']">Please enter a valid email</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone (XXX-XXX-XXXX)</label>
+              <input type="tel" class="form-control" id="phone" formControlName="phone"
+                [class.is-invalid]="f['phone'].touched && f['phone'].invalid">
+              <div class="invalid-feedback" *ngIf="f['phone'].touched && f['phone'].invalid">
+                <div *ngIf="f['phone'].errors?.['required']">Phone is required</div>
+                <div *ngIf="f['phone'].errors?.['pattern']">Please enter in format: XXX-XXX-XXXX</div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="quantity" class="form-label">Number of Tickets</label>
+              <input type="number" class="form-control" id="quantity" formControlName="quantity"
+                [class.is-invalid]="f['quantity'].touched && f['quantity'].invalid">
+              <div class="invalid-feedback" *ngIf="f['quantity'].touched && f['quantity'].invalid">
+                <div *ngIf="f['quantity'].errors?.['required']">Quantity is required</div>
+                <div *ngIf="f['quantity'].errors?.['min']">Minimum 1 ticket required</div>
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg"
+                [disabled]="ticketForm.invalid || isProcessing || ticketCount === 0">
+                @if(isProcessing) {
+                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                Processing...
+                } @else {
+                Buy Tickets
+                }
+              </button>
+            </div>
+          </form>
+
+          @if(successMessage) {
+          <div class="alert alert-success mt-3">
+            {{ successMessage }}
+            <div class="mt-2">
+              <button class="btn btn-outline-primary" (click)="navigateToEvents()">
+                Back to Events
+              </button>
+            </div>
+          </div>
+          }
+
+          @if(errorMessage) {
+          <div class="alert alert-danger mt-3">
+            {{ errorMessage }}
+            <div class="mt-2">
+              <button class="btn btn-outline-danger" (click)="retry()">
+                Retry Purchase
+              </button>
+            </div>
+          </div>
+          }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
