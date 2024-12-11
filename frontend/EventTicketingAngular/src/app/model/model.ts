@@ -45,3 +45,10 @@ export interface BuyTicketDTO {
     customer: Customer;
     ticketCount: number;
 }
+
+export interface Configurations {
+    totalTickets: number;
+    ticketReleaseRate: number;
+    customerRetrivalRate: number;
+    maxTicketCapacity: number;
+}

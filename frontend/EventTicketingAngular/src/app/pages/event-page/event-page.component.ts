@@ -15,7 +15,6 @@ export class EventPageComponent implements OnInit {
   eventService = inject(EventService);
   eventList: Event[] = [];
   cardColors: string[] = [
-    '#ffadad', // light red
     '#ffd6a5', // light orange
     '#fdffb6', // light yellow
     '#caffbf'  // light green

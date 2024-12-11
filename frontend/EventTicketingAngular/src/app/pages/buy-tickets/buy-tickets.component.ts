@@ -86,11 +86,11 @@ export class BuyTicketsComponent implements OnInit, OnDestroy {
 
     const buyTicketData: BuyTicketDTO = {
       customer: {
-        customerId: 0,
+        customerId: 0, // backend thing
         firstName: this.ticketForm.value.name,
         email: this.ticketForm.value.email,
         phone: this.ticketForm.value.phone,
-        customerCode: ''
+        customerCode: '' // backend
       },
       ticketCount: this.ticketForm.value.quantity
     };

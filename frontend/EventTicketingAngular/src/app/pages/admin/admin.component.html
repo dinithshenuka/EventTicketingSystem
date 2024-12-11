@@ -1,1 +1,118 @@
-<p>admin works!</p>
+<div class="container-fluid mt-4">
+    <h2 class="mb-4">Admin Dashboard</h2>
+    
+    <div class="row">
+        <!-- Tickets Table -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Tickets Overview</h4>
+                </div>
+                <div class="card-body">
+                    @if(isLoading) {
+                        <div class="text-center p-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ticket ID</th>
+                                        <th>Event Name</th>
+                                        <th>Vendor ID</th>
+                                        <th>Status</th>
+                                        <th>Customer ID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for(ticket of tickets; track ticket.ticketId) {
+                                        <tr [ngClass]="{'table-success': !ticket.customer}">
+                                            <td>{{ticket.ticketId}}</td>
+                                            <td>{{ticket.event.eventName}}</td>
+                                            <td>{{ticket.vendor.vendorId}}</td>
+                                            <td>{{ticket.ticketStatus}}</td>
+                                            <td>{{ticket.customer?.customerId || 'Available'}}</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="col-md-4">
+            <!-- Start / stop -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Simulation Control</h4>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-lg w-100" 
+                            [class.btn-danger]="isSimulationRunning" 
+                            [class.btn-success]="!isSimulationRunning"
+                            (click)="toggleSimulation()">
+                        {{ isSimulationRunning ? 'Stop' : 'Start' }} Simulation
+                    </button>
+                </div>
+            </div>
+
+            <!-- Configuration  -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>System Configuration</h4>
+                </div>
+                <div class="card-body">
+                    <form [formGroup]="configForm" (ngSubmit)="saveConfig()">
+                        <div class="mb-3">
+                            <label class="form-label">Total Tickets</label>
+                            <input type="number" class="form-control" formControlName="totalTickets">
+                            @if(configForm.errors?.['totalExceedsMax']) {
+                                <small class="text-danger">Total tickets cannot exceed maximum capacity</small>
+                            }
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Max Ticket Capacity</label>
+                            <input type="number" class="form-control" formControlName="maxTicketCapacity">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ticket Release Rate (1-5)</label>
+                            <input type="number" class="form-control" formControlName="ticketReleaseRate">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Customer Retrieval Rate (1-5)</label>
+                            <input type="number" class="form-control" formControlName="customerRetrivalRate">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" [disabled]="!configForm.valid">
+                            Save Configuration
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Vendors List -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>Vendors</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        @for(vendor of vendors; track vendor.vendorId) {
+                            <li class="list-group-item">{{vendor.vendorName}}</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            @if(message) {
+                <div class="alert alert-info mt-3">{{message}}</div>
+            }
+        </div>
+    </div>
+</div>
