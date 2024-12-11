@@ -3,8 +3,6 @@ package lk.ac.iit.EventTicketingSystem.models;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
 
 @Entity(name = "Event")
 

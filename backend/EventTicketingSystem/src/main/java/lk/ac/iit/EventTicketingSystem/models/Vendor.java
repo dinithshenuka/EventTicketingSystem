@@ -10,10 +10,9 @@ public class Vendor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
-    private int vendorId;
-    private String firstName;
+    private Long vendorId;
+    private String vendorName;
     private String email;
-    @Column(unique = true)
     private String phone;
     private String companyName;
     private String companyAddress;
@@ -34,41 +33,44 @@ public class Vendor implements Serializable {
     public Vendor() {
     }
 
-    public Vendor(String vendorCode, String companyAddress, String companyName, String phone, String email, String firstName) {
-        this.vendorCode = vendorCode;
-        this.companyAddress = companyAddress;
-        this.companyName = companyName;
-        this.phone = phone;
+    public Vendor(String vendorName, String email, String phone, String companyName, String companyAddress, List<Event> events, List<Ticket> tickets) {
+        this.vendorName = vendorName;
         this.email = email;
-        this.firstName = firstName;
+        this.phone = phone;
+        this.companyName = companyName;
+        this.companyAddress = companyAddress;
+        this.events = events;
+        this.tickets = tickets;
     }
 
-    public Vendor(int vendorId, String firstName, String email, String phone, String companyName, String companyAddress, String vendorCode) {
+    public Vendor(Long vendorId, String vendorName, String email, String phone, String companyName, String companyAddress, String vendorCode, List<Event> events, List<Ticket> tickets) {
         this.vendorId = vendorId;
-        this.firstName = firstName;
+        this.vendorName = vendorName;
         this.email = email;
         this.phone = phone;
         this.companyName = companyName;
         this.companyAddress = companyAddress;
         this.vendorCode = vendorCode;
+        this.events = events;
+        this.tickets = tickets;
     }
 
     //getters setters
 
-    public int getVendorId() {
+    public Long getVendorId() {
         return vendorId;
     }
 
-    public void setVendorId(int vendorId) {
+    public void setVendorId(Long vendorId) {
         this.vendorId = vendorId;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getVendorName() {
+        return vendorName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
     }
 
     public String getEmail() {
@@ -115,11 +117,14 @@ public class Vendor implements Serializable {
     public String toString() {
         return "Vendor{" +
                 "vendorId=" + vendorId +
-                ", firstName='" + firstName + '\'' +
+                ", vendorName='" + vendorName + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", companyName='" + companyName + '\'' +
                 ", companyAddress='" + companyAddress + '\'' +
+                ", vendorCode='" + vendorCode + '\'' +
+                ", events=" + events +
+                ", tickets=" + tickets +
                 '}';
     }
 }
