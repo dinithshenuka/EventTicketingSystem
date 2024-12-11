@@ -12,9 +12,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './add-tickets.component.html',
-  styleUrls: ['./add-tickets.component.css' ] 
+  styleUrls: ['./add-tickets.component.css']
 })
-
 export class AddTicketsComponent implements OnInit {
   addTicketForm!: FormGroup;
   events: Event[] = [];
@@ -22,6 +21,7 @@ export class AddTicketsComponent implements OnInit {
   vendorId!: number;
   submitted = false;
   successMessage: string = '';
+  errorMessage: string = '';
   previewTicket: Ticket | null = null;
 
   constructor(
@@ -34,33 +34,42 @@ export class AddTicketsComponent implements OnInit {
 
   ngOnInit(): void {
     this.vendorId = this.route.snapshot.params['vendorId'];
+    this.initializeForm();
+    this.loadVendorDetails();
+    this.loadEvents();
+  }
+
+  private initializeForm(): void {
     this.addTicketForm = this.fb.group({
       ticketPrice: [null, [Validators.required, Validators.min(1)]],
       ticketType: ['regular', [Validators.required]],
       ticketCount: [null, [Validators.required, Validators.min(1), Validators.max(100)]],
       event: [null, [Validators.required]]
     });
-
-    this.loadVendorDetails();
-    this.loadEvents();
   }
 
   loadVendorDetails(): void {
-    this.vendorService.getVendorById(this.vendorId).subscribe(vendor => {
-      this.vendor = vendor;
+    this.vendorService.getVendorById(this.vendorId).subscribe({
+      next: (vendor) => {
+        this.vendor = vendor;
+      },
+      error: (error) => {
+        this.errorMessage = 'Error loading vendor details';
+        console.error('Error loading vendor:', error);
+      }
     });
   }
 
   loadEvents(): void {
-    this.eventService.getAllEvents().subscribe(
-      events => {
+    this.eventService.getAllEvents().subscribe({
+      next: (events) => {
         this.events = events;
-        console.log('Event List:', this.events); // Log event list for debugging
       },
-      error => {
+      error: (error) => {
+        this.errorMessage = 'Error loading events';
         console.error('Error fetching events:', error);
       }
-    );
+    });
   }
 
   get f() {
@@ -69,21 +78,21 @@ export class AddTicketsComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-  
+    this.clearMessages();
+
     if (this.addTicketForm.invalid) {
+      this.submitted = false;
       return;
     }
-  
-    // Log the value of the event form control
-    console.log('Selected event ID from form:', this.addTicketForm.value.event);
-  
+
     const selectedEvent = this.events.find(event => event.eventId === +this.addTicketForm.value.event);
-  
+
     if (!selectedEvent) {
-      console.error('Selected event not found');
+      this.errorMessage = 'Selected event not found';
+      this.submitted = false;
       return;
     }
-  
+
     const ticketData: AddTicketDTO = {
       ticket: {
         ticketId: 0,
@@ -96,25 +105,36 @@ export class AddTicketsComponent implements OnInit {
       vendor: this.vendor,
       ticketCount: this.addTicketForm.value.ticketCount
     };
-  
-    console.log('Submitting ticket data:', ticketData); // Log ticket data for debugging
-  
-    this.ticketService.addTicket(ticketData).subscribe(
-      response => {
-        this.successMessage = 'Ticket added successfully!';
-        this.previewTicket = response; // Show preview of submitted ticket
-        this.addTicketForm.reset();
+
+    this.ticketService.addTicket(ticketData).subscribe({
+      next: (response) => {
+        this.submitted = false;
+        this.successMessage = 'Tickets added successfully!';
+        this.previewTicket = response;
+        this.resetForm();
       },
-      error => {
+      error: (error) => {
+        this.submitted = false;
+        this.errorMessage = error?.message || 'An error occurred while adding the tickets';
         console.error('Error adding ticket:', error);
-        this.successMessage = 'An error occurred while adding the ticket.';
       }
-    );
+    });
+  }
+
+  private clearMessages(): void {
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
+
+  private resetForm(): void {
+    this.addTicketForm.reset({
+      ticketType: 'regular'
+    });
   }
 
   addMoreTickets(): void {
-    this.addTicketForm.reset();
+    this.resetForm();
     this.previewTicket = null;
-    this.successMessage = '';
+    this.clearMessages();
   }
 }

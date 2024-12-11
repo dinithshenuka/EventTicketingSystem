@@ -1,3 +1,4 @@
+// src/main/java/lk/ac/iit/EventTicketingSystem/SystemConfiguration.java
 package lk.ac.iit.EventTicketingSystem;
 
 import com.google.gson.Gson;
@@ -15,23 +16,18 @@ public class SystemConfiguration implements Serializable {
     private int ticketReleaseRate;
     private int customerRetrievalRate;
     private int maxTicketCapacity;
+    private boolean running;
 
     public SystemConfiguration() {
+        this.running = true; // Default to running
     }
 
-    public SystemConfiguration(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketCapacity) {
-        this.totalTickets = totalTickets;
-        this.ticketReleaseRate = ticketReleaseRate;
-        this.customerRetrievalRate = customerRetrievalRate;
-        this.maxTicketCapacity = maxTicketCapacity;
-    }
-
-    // method to get input and validate
+    // Method to get input and validate
     public static void getConfigInputs(SystemConfiguration systemConfiguration) {
         Scanner input = new Scanner(System.in);
         System.out.println("\n=== Ticket System Configuration ===");
 
-        // total number of tickets
+        // Total number of tickets
         while (true) {
             try {
                 System.out.print("Enter Total Tickets: ");
@@ -39,33 +35,41 @@ public class SystemConfiguration implements Serializable {
                 systemConfiguration.setTotalTickets(newTotalTickets);
                 break;
             } catch (InputMismatchException e) {
-                System.out.println("Error: Please enter a integer value greater than 0");
+                System.out.println("Error: Please enter an integer value greater than 0");
                 input.next();
             }
         }
 
-        // ticket release rate
+        // Ticket release rate
         while (true) {
             try {
-                System.out.print("Enter Ticket Release Rate: ");
+                System.out.print("Enter Ticket Release Rate (1-5): ");
                 int newTicketReleaseRate = input.nextInt();
-                systemConfiguration.setTicketReleaseRate(newTicketReleaseRate);
-                break;
+                if (newTicketReleaseRate >= 1 && newTicketReleaseRate <= 5) {
+                    systemConfiguration.setTicketReleaseRate(newTicketReleaseRate);
+                    break;
+                } else {
+                    System.out.println("Error: Please enter an integer value between 1 and 5");
+                }
             } catch (InputMismatchException e) {
-                System.out.println("Error: Please enter a integer value greater than 0");
+                System.out.println("Error: Please enter an integer value between 1 and 5");
                 input.next();
             }
         }
 
-        // customer retrieval rate
+        // Customer retrieval rate
         while (true) {
             try {
-                System.out.print("Enter Customer Retrieval Rate: ");
+                System.out.print("Enter Customer Retrieval Rate (1-5): ");
                 int newCustomerRetrievalRate = input.nextInt();
-                systemConfiguration.setCustomerRetrievalRate(newCustomerRetrievalRate);
-                break;
+                if (newCustomerRetrievalRate >= 1 && newCustomerRetrievalRate <= 5) {
+                    systemConfiguration.setCustomerRetrievalRate(newCustomerRetrievalRate);
+                    break;
+                } else {
+                    System.out.println("Error: Please enter an integer value between 1 and 5");
+                }
             } catch (InputMismatchException e) {
-                System.out.println("Error: Please enter a integer value greater than 0");
+                System.out.println("Error: Please enter an integer value between 1 and 5");
                 input.next();
             }
         }
@@ -75,16 +79,20 @@ public class SystemConfiguration implements Serializable {
             try {
                 System.out.print("Enter Max Ticket Capacity: ");
                 int newMaxTicketCapacity = input.nextInt();
-                systemConfiguration.setMaxTicketCapacity(newMaxTicketCapacity);
-                break;
+                if (newMaxTicketCapacity > 0 && newMaxTicketCapacity <= systemConfiguration.getTotalTickets()) {
+                    systemConfiguration.setMaxTicketCapacity(newMaxTicketCapacity);
+                    break;
+                } else {
+                    System.out.println("Error: Max Ticket Capacity must be greater than 0 and less than Total Tickets");
+                }
             } catch (InputMismatchException e) {
-                System.out.println("Error: Please enter a integer value greater than 0");
+                System.out.println("Error: Please enter an integer value greater than 0");
                 input.next();
             }
         }
     }
 
-    // save object
+    // Save object
     public static void saveConfiguration(SystemConfiguration config, String filePath) throws IOException {
         Gson gson = new Gson();
         String json = gson.toJson(config);
@@ -97,8 +105,13 @@ public class SystemConfiguration implements Serializable {
         System.out.println("Configuration saved successfully to: " + filePath);
     }
 
-
-
+    // Update configuration
+    public SystemConfiguration updateConfiguration(SystemConfiguration systemConfiguration) {
+        this.totalTickets = systemConfiguration.getTotalTickets();
+        this.ticketReleaseRate = systemConfiguration.getTicketReleaseRate();
+        this.customerRetrievalRate = systemConfiguration.getCustomerRetrievalRate();
+        this.maxTicketCapacity = systemConfiguration.getMaxTicketCapacity();
+        return this;
 
     //getters and setters
 
@@ -126,13 +139,17 @@ public class SystemConfiguration implements Serializable {
         this.customerRetrievalRate = customerRetrievalRate;
     }
 
-    public int getMaxTicketCapacity() {
-        return maxTicketCapacity;
-    }
-
     public void setMaxTicketCapacity(int maxTicketCapacity) {
         this.maxTicketCapacity = maxTicketCapacity;
     }
+
+    //  running flag
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
 
 
     @Override
@@ -142,6 +159,7 @@ public class SystemConfiguration implements Serializable {
                 ", ticketReleaseRate=" + ticketReleaseRate +
                 ", customerRetrievalRate=" + customerRetrievalRate +
                 ", maxTicketCapacity=" + maxTicketCapacity +
+                ", running=" + running +
                 '}';
     }
 }

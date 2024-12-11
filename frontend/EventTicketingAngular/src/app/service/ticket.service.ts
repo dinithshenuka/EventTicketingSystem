@@ -13,9 +13,8 @@ export class TicketService {
   constructor(private http:HttpClient) { }
 
   // Get all tickets (Database and pool)
-  public getAllTickets(): Observable<AllTickets[]> {
-    return this.http.get<AllTickets[]>(`${this.apiUrl}all`);
-  }
+  public getAllTickets(): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.apiUrl}all`);
 
   // Get ticket by id
   public getTicketById(ticketId: number): Observable<Ticket> {

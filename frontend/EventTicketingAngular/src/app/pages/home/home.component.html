@@ -2,37 +2,45 @@
 <div class="container text-center p-5">
     <h1>Welcome to</h1>
     <h1>VENTIX</h1>
-    <p>Real-Time Event Ticketing System</p>
+    <p class="lead">Real-Time Event Ticketing System</p>
 </div>
 
 <!-- cards for vendor and customer -->
-<div class="container">
-    <div class="row">
+<div class="container mb-5">
+    <div class="row g-4">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
+            <div class="card h-100" [ngStyle]="{'background-color': getCardColor(0)}">
+                <div class="card-header text-center py-4">
+                    <i class="fas fa-ticket-alt fa-3x"></i>
+                </div>
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title text-center">Sell Tickets</h5>
-                    <p class="card-text text-center">Easily list your events and manage ticket sales in real time. 
+                    <p class="card-text text-center">
+                        Easily list your events and manage ticket sales in real time. 
                         Reach more customers with seamless ticketing.
                     </p>
-                    <div class="text-center">
+                    <div class="text-center mt-auto">
                         <a routerLink="/add-vendor" class="btn btn-primary">Add Tickets</a>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
+            <div class="card h-100" [ngStyle]="{'background-color': getCardColor(1)}">
+                <div class="card-header text-center py-4">
+                    <i class="fas fa-shopping-cart fa-3x"></i>
+                </div>
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title text-center">Buy Tickets</h5>
-                    <p class="card-text text-center">Discover and secure tickets for your favorite events instantly. 
-                        Experience a hassle-free purchase process</p>
-                    <div class="text-center">
-                        <a routerLink="/event-page" class="btn btn-primary">Select the Event</a>
+                    <p class="card-text text-center">
+                        Discover and secure tickets for your favorite events instantly. 
+                        Experience a hassle-free purchase process
+                    </p>
+                    <div class="text-center mt-auto">
+                        <a routerLink="/event-page" class="btn btn-primary">Buy Tickets</a>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

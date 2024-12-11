@@ -1,5 +1,3 @@
-import e from "express";
-
 export interface Event {
     eventId: number;
     eventName: string;
@@ -64,4 +62,11 @@ export interface AddTicketDTO {
 export interface BuyTicketDTO {
     customer: Customer;
     ticketCount: number;
+}
+
+export interface Configurations {
+    totalTickets: number;
+    ticketReleaseRate: number;
+    customerRetrivalRate: number;
+    maxTicketCapacity: number;
 }

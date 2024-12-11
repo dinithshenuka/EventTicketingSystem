@@ -37,7 +37,8 @@ export const routes: Routes = [
         path: 'add-vendor',
         component: AddVendorComponent
     },
-    { 
+
+    {
         path:'admin',
         component:AdminComponent
     }

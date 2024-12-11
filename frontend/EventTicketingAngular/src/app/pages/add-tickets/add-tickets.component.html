@@ -1,54 +1,122 @@
-<p>add-tickets works!</p>
-<div class="container">
-    <h2>Add Ticket</h2>
-    
-    <form [formGroup]="addTicketForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="ticketPrice">Ticket Price</label>
-        <input type="number" id="ticketPrice" formControlName="ticketPrice" class="form-control" />
-        <div *ngIf="f['ticketPrice'].touched && f['ticketPrice'].invalid" class="text-danger">
-          <small *ngIf="f['ticketPrice'].errors?.['required']">Ticket Price is required.</small>
-          <small *ngIf="f['ticketPrice'].errors?.['min']">Ticket Price must be at least 1.</small>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <!-- Vendor Info Card -->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Add Event Tickets</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Vendor:</strong> {{vendor.vendorName}}</p>
+              <p><strong>Company:</strong> {{vendor.companyName}}</p>
+            </div>
+            <div class="col-md-6 text-end">
+              <p>Vendor Code:</p>
+              <h6 class="text-primary">{{vendor.vendorCode}}</h6>
+            </div>
+          </div>
         </div>
       </div>
-  
-      <div class="form-group">
-        <label for="ticketType">Ticket Type</label>
-        <select id="ticketType" formControlName="ticketType" class="form-control">
-          <option value="regular">Regular</option>
-          <option value="VIP">VIP</option>
-        </select>
-        <div *ngIf="f['ticketType'].touched && f['ticketType'].invalid" class="text-danger">
-          <small *ngIf="f['ticketType'].errors?.['required']">Ticket Type is required.</small>
+
+      <!-- Alert Messages -->
+      @if(errorMessage) {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          System is offline. Please try again later.
+          <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+        </div>
+      }
+
+      @if(successMessage) {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ successMessage }}
+          <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+        </div>
+      }
+
+      <!-- Ticket Form -->
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title mb-4">Create Tickets</h4>
+
+          <form [formGroup]="addTicketForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label class="form-label">Ticket Price</label>
+              <input type="number" class="form-control" 
+                     formControlName="ticketPrice"
+                     [class.is-invalid]="f['ticketPrice'].touched && f['ticketPrice'].invalid">
+              <div class="invalid-feedback" *ngIf="f['ticketPrice'].touched && f['ticketPrice'].invalid">
+                <div *ngIf="f['ticketPrice'].errors?.['required']">Ticket Price is required</div>
+                <div *ngIf="f['ticketPrice'].errors?.['min']">Ticket Price must be at least 1</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Ticket Type</label>
+              <select class="form-select" 
+                      formControlName="ticketType"
+                      [class.is-invalid]="f['ticketType'].touched && f['ticketType'].invalid">
+                <option value="">Select type</option>
+                <option value="regular">Regular</option>
+                <option value="VIP">VIP</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="f['ticketType'].touched && f['ticketType'].invalid">
+                Ticket Type is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Ticket Count</label>
+              <input type="number" class="form-control" 
+                     formControlName="ticketCount"
+                     [class.is-invalid]="f['ticketCount'].touched && f['ticketCount'].invalid">
+              <div class="invalid-feedback" *ngIf="f['ticketCount'].touched && f['ticketCount'].invalid">
+                <div *ngIf="f['ticketCount'].errors?.['required']">Ticket Count is required</div>
+                <div *ngIf="f['ticketCount'].errors?.['min']">Ticket Count must be at least 1</div>
+                <div *ngIf="f['ticketCount'].errors?.['max']">Maximum 100 tickets allowed</div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Event</label>
+              <select class="form-select" 
+                      formControlName="event"
+                      [class.is-invalid]="f['event'].touched && f['event'].invalid">
+                <option value="">Select event</option>
+                @for(event of events; track event.eventId) {
+                  <option [value]="event.eventId">{{event.eventName}}</option>
+                }
+              </select>
+              <div class="invalid-feedback" *ngIf="f['event'].touched && f['event'].invalid">
+                Event selection is required
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg" 
+                      [disabled]="addTicketForm.invalid || submitted">
+                @if(submitted) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  Processing request...
+                } @else {
+                  Add Tickets
+                }
+              </button>
+            </div>
+          </form>
+
+          @if(successMessage) {
+            <div class="mt-3">
+              <div class="d-grid">
+                <button class="btn btn-outline-success" (click)="addMoreTickets()">
+                  Add More Tickets
+                </button>
+              </div>
+            </div>
+          }
         </div>
       </div>
-  
-      <div class="form-group">
-        <label for="ticketCount">Ticket Count</label>
-        <input type="number" id="ticketCount" formControlName="ticketCount" class="form-control" />
-        <div *ngIf="f['ticketCount'].touched && f['ticketCount'].invalid" class="text-danger">
-          <small *ngIf="f['ticketCount'].errors?.['required']">Ticket Count is required.</small>
-          <small *ngIf="f['ticketCount'].errors?.['min']">Ticket Count must be at least 1.</small>
-          <small *ngIf="f['ticketCount'].errors?.['max']">Ticket Count must be less than or equal to 100.</small>
-        </div>
-      </div>
-  
-      <div class="form-group">
-        <label for="event">Event</label>
-        <select id="event" formControlName="event" class="form-control">
-          <option *ngFor="let event of events" [value]="event.eventId">{{ event.eventName }}</option>
-        </select>
-        <div *ngIf="f['event'].touched && f['event'].invalid" class="text-danger">
-          <small *ngIf="f['event'].errors?.['required']">Event selection is required.</small>
-        </div>
-      </div>
-  
-      <button type="submit" class="btn btn-primary" [disabled]="addTicketForm.invalid">Add Ticket</button>
-    </form>
-  
-    <div *ngIf="successMessage" class="alert alert-success mt-4">
-      <p>{{ successMessage }}</p>
-      <p *ngIf="previewTicket">Preview: {{ previewTicket.ticketType }} - {{ previewTicket.ticketPrice }} - {{ previewTicket.ticketCode }}</p>
-      <button class="btn btn-secondary" (click)="addMoreTickets()">Add More Tickets</button>
     </div>
+  </div>
 </div>

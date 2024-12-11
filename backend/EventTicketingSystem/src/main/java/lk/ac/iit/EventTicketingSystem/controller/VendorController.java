@@ -22,8 +22,8 @@ public class VendorController {
 
     @GetMapping("/all")
     public ResponseEntity<List<Vendor>> getAllVendors() {
-     List<Vendor> vendors = vendorService.findAllVendors();
-     return new ResponseEntity<>(vendors, HttpStatus.OK);
+        List<Vendor> vendors = vendorService.findAllVendors();
+        return new ResponseEntity<>(vendors, HttpStatus.OK);
     }
 
     @GetMapping("/find/{vendorId}")

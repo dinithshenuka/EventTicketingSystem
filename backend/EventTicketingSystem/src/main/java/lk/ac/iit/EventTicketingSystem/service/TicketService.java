@@ -1,5 +1,6 @@
 package lk.ac.iit.EventTicketingSystem.service;
 
+import lk.ac.iit.EventTicketingSystem.SystemConfiguration;
 import lk.ac.iit.EventTicketingSystem.dto.AddTicketDTO;
 import lk.ac.iit.EventTicketingSystem.dto.BuyTicketDTO;
 import lk.ac.iit.EventTicketingSystem.exception.UserNotFoundException;
@@ -20,19 +21,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
     private final TicketRepo ticketRepo;
     private final TicketPool ticketPool;
     private final CustomerService customerService;
+    private final SystemConfiguration systemConfiguration;
 
     @Autowired
-    public TicketService(TicketRepo ticketRepo, TicketPool ticketPool, CustomerService customerService) {
+    public TicketService(TicketRepo ticketRepo, TicketPool ticketPool, CustomerService customerService, SystemConfiguration systemConfiguration) {
         this.ticketRepo = ticketRepo;
         this.ticketPool = ticketPool;
         this.customerService = customerService;
+        this.systemConfiguration = systemConfiguration;
     }
 
     Logger logger = LoggerFactory.getLogger(TicketService.class);
@@ -40,25 +42,27 @@ public class TicketService {
     // method to add tickets (Vendor add tickets)
     @Async(value = "VendorThreadPool")
     public CompletableFuture<List<Ticket>> addTicket(AddTicketDTO addTicketDTO) {
+        if (!systemConfiguration.isRunning()) {
+            throw new IllegalStateException("System is stopped. Cannot add tickets.");
+        }
 
         List<Ticket> savedTickets = new ArrayList<>();
-
         Ticket baseTicket = addTicketDTO.getTicket();
         Event event = addTicketDTO.getEvent();
-        Long eventId = event.getEventId();
         Vendor vendor = addTicketDTO.getVendor();
         Long vendorId = vendor.getVendorId();
 
         logger.info("Thread {} is allocated to Vendor {}",
-                Thread.currentThread().getName().replaceAll("\\D+", ""), vendorId);
+                Thread.currentThread().getName().replaceAll("\\D+", ""), vendor.getVendorId());
+
+        logger.info("ticketReleaseRate : {} milliseconds", systemConfiguration.getTicketReleaseRate());
 
         int ticketCount = addTicketDTO.getTicketCount();
         try {
             for (int loop = 0; loop < ticketCount; loop++) {
-
                 Ticket ticket = new Ticket();
 
-                ticket.setEvent(event); // composition
+                ticket.setEvent(event);  // composition
                 ticket.setVendor(vendor); // aggregation
 
                 ticket.setTicketCode(UUID.randomUUID().toString());
@@ -66,30 +70,30 @@ public class TicketService {
                 ticket.setTicketType(baseTicket.getTicketType());
                 ticket.setTicketStatus("available");
 
-                ticketRepo.save(ticket); // Save to DB
-                ticketPool.addToTicketPool(eventId,ticket); // Add to the pool
+                ticketRepo.save(ticket); // DB
+                ticketPool.addToTicketPool(event.getEventId(), ticket); // Add to pool
                 logger.info("Ticket saved to the Database");
 
-                Thread.sleep(1000);
 
-                // for api return (adding to saved tickets array)
-                savedTickets.add(ticket);
+                Thread.sleep(1000L * systemConfiguration.getTicketReleaseRate());
             }
         } catch (InterruptedException e) {
             logger.error("Thread was interrupted", e);
             Thread.currentThread().interrupt();
             throw new RuntimeException("Thread was interrupted", e);
         }
-        return CompletableFuture.completedFuture(savedTickets); // api
+        return CompletableFuture.completedFuture(savedTickets);
     }
 
-    // method to remove tickets (Customer buy tickets
+    // method to remove tickets (Customer buy tickets)
     @Async(value = "CustomerThreadPool")
     @Transactional
     public CompletableFuture<ResponseEntity<List<Ticket>>> buyTicket(Long eventId, BuyTicketDTO buyTicketDTO) {
+        if (!systemConfiguration.isRunning()) {
+            throw new IllegalStateException("System is stopped. Cannot buy tickets.");
+        }
 
         int ticketCount = buyTicketDTO.getTicketCount();
-
         Customer customer = customerService.findOrAddCustomer(
                 buyTicketDTO.getCustomer().getFirstName(),
                 buyTicketDTO.getCustomer().getEmail(),
@@ -99,7 +103,8 @@ public class TicketService {
         logger.info("Thread {} is allocated to Customer {}",
                 Thread.currentThread().getName().replaceAll("\\D+", ""), customer.getCustomerId());
 
-        // Validate ticket count upfront
+        logger.info("customerRetrievalRate : {} milliseconds", systemConfiguration.getCustomerRetrievalRate());
+
         int availableTickets = ticketPool.getTicketCountForEvent(eventId);
         if (availableTickets < ticketCount) {
             String errorMessage = String.format(
@@ -112,19 +117,18 @@ public class TicketService {
 
         List<Ticket> bookedTickets = new ArrayList<>();
         try {
-            // Attempt to book tickets
             for (int loop = 0; loop < ticketCount; loop++) {
                 Ticket ticket = ticketPool.removeFromTicketPool(eventId);
                 ticket.setTicketStatus("booked");
                 ticket.setCustomer(customer);
 
-                // Save the ticket status to the database
                 ticketRepo.save(ticket);
-
                 bookedTickets.add(ticket);
                 logger.info("Ticket booked successfully: {}", ticket.getTicketId());
 
-                Thread.sleep(1000);
+                Thread.sleep(1000L * systemConfiguration.getCustomerRetrievalRate());
+                logger.info("Thread {} is sleeping for {} seconds",
+                        Thread.currentThread().getName().replaceAll("\\D+", ""), systemConfiguration.getCustomerRetrievalRate());
             }
 
             logger.info("All requested tickets booked successfully for customer: {}", customer.getCustomerId());

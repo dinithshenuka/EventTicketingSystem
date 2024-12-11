@@ -33,5 +33,4 @@ public class ThreadConfiguration {
         executor.initialize();
         return executor;
     }
-
 }
