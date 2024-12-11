@@ -33,7 +33,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initConfigForm();
-    this.loadConfiguration();
+    // this.loadConfiguration();
     if (isPlatformBrowser(this.platformId)) {
       this.startPolling();
     }
@@ -52,21 +52,21 @@ export class AdminComponent implements OnInit, OnDestroy {
     const total = group.get('totalTickets')?.value;
     const max = group.get('maxTicketCapacity')?.value;
     if (total && max) {
-      return total > max ? { totalExceedsMax: true } : null;
+      return total < max ? { totalExceedsMax: true } : null;
     }
     return null;
   }
 
-  private loadConfiguration(): void {
-    this.configService.getConfiguration().subscribe({
-      next: (config: Configurations) => {
-        this.configForm.patchValue(config);
-      },
-      error: () => {
-        this.message = 'Failed to load configuration';
-      }
-    });
-  }
+  // private loadConfiguration(): void {
+  //   this.configService.getConfiguration().subscribe({
+  //     next: (config: Configurations) => {
+  //       this.configForm.patchValue(config);
+  //     },
+  //     error: () => {
+  //       this.message = 'Failed to load configuration';
+  //     }
+  //   });
+  // }
 
   startPolling(): void {
     // Poll tickets

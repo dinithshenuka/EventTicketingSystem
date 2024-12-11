@@ -12,10 +12,11 @@ export class ConfigurationService {
 
   constructor(private http: HttpClient) {}
 
-  // get
-  getConfiguration(): Observable<Configurations> {
-    return this.http.get<Configurations>(`${this.baseUrl}`);
-  }
+  // // get
+  // getConfiguration(): Observable<Configurations> {
+  //   console.log('getConfiguration');
+  //   return this.http.get<Configurations>(`${this.baseUrl}get`);
+  // }
 
   // update
   updateConfiguration(config: Configurations): Observable<Configurations> {
