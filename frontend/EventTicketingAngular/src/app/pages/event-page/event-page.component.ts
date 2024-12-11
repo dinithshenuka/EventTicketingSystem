@@ -14,6 +14,16 @@ export class EventPageComponent implements OnInit {
 
   eventService = inject(EventService);
   eventList: Event[] = [];
+  cardColors: string[] = [
+    '#ffadad', // light red
+    '#ffd6a5', // light orange
+    '#fdffb6', // light yellow
+    '#caffbf'  // light green
+  ];
+  
+  getCardColor(index: number): string {
+    return this.cardColors[index % this.cardColors.length];
+  }
 
   ngOnInit(): void {
     this.getEvents();

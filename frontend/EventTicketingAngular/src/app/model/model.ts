@@ -1,5 +1,3 @@
-import e from "express";
-
 export interface Event {
     eventId: number;
     eventName: string;
