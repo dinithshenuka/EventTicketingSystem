@@ -10,20 +10,7 @@ import java.util.concurrent.Executor;
 @Configuration
 @EnableAsync
 public class SystemConfiguration {
-    private int totalTicketsInPool = 500;
-    private int ticketReleaseRate;
-    private int customerRetrievalRate;
-    private int maxTicketPoolCapacity = 600;
 
-    public SystemConfiguration() {
-    }
-
-    public SystemConfiguration(int totalTicketsInPool, int ticketReleaseRate, int customerRetrievalRate, int maxTicketPoolCapacity) {
-        this.totalTicketsInPool = totalTicketsInPool;
-        this.ticketReleaseRate = ticketReleaseRate;
-        this.customerRetrievalRate = customerRetrievalRate;
-        this.maxTicketPoolCapacity = maxTicketPoolCapacity;
-    }
 
     // thread pool config
     @Bean(name="treadPool")
