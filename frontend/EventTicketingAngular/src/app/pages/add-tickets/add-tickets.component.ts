@@ -71,16 +71,15 @@ export class AddTicketsComponent implements OnInit {
     this.submitted = true;
   
     if (this.addTicketForm.invalid) {
+      this.submitted = false; // Reset if invalid
       return;
     }
-  
-    // Log the value of the event form control
-    console.log('Selected event ID from form:', this.addTicketForm.value.event);
   
     const selectedEvent = this.events.find(event => event.eventId === +this.addTicketForm.value.event);
   
     if (!selectedEvent) {
       console.error('Selected event not found');
+      this.submitted = false; // Reset if event not found
       return;
     }
   
@@ -97,19 +96,21 @@ export class AddTicketsComponent implements OnInit {
       ticketCount: this.addTicketForm.value.ticketCount
     };
   
-    console.log('Submitting ticket data:', ticketData); // Log ticket data for debugging
-  
-    this.ticketService.addTicket(ticketData).subscribe(
-      response => {
+    this.ticketService.addTicket(ticketData).subscribe({
+      next: (response) => {
+        this.submitted = false; // Reset loading state
         this.successMessage = 'Ticket added successfully!';
-        this.previewTicket = response; // Show preview of submitted ticket
-        this.addTicketForm.reset();
+        this.previewTicket = response;
+        this.addTicketForm.reset({
+          ticketType: 'regular' // Reset with default value
+        });
       },
-      error => {
+      error: (error) => {
+        this.submitted = false; // Reset loading state
         console.error('Error adding ticket:', error);
         this.successMessage = 'An error occurred while adding the ticket.';
       }
-    );
+    });
   }
 
   addMoreTickets(): void {

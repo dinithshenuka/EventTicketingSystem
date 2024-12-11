@@ -95,6 +95,11 @@
                 </div>
             </div>
 
+            <!-- Messages -->
+            @if(message) {
+                <div class="alert alert-info mt-3">{{message}}</div>
+            }
+
             <!-- Vendors List -->
             <div class="card">
                 <div class="card-header">
@@ -109,10 +114,6 @@
                 </div>
             </div>
 
-            <!-- Messages -->
-            @if(message) {
-                <div class="alert alert-info mt-3">{{message}}</div>
-            }
         </div>
     </div>
 </div>
