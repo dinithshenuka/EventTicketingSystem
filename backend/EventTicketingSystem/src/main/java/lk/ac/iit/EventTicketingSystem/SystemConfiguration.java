@@ -1,4 +1,3 @@
-// src/main/java/lk/ac/iit/EventTicketingSystem/SystemConfiguration.java
 package lk.ac.iit.EventTicketingSystem;
 
 import com.google.gson.Gson;
@@ -112,9 +111,9 @@ public class SystemConfiguration implements Serializable {
         this.customerRetrievalRate = systemConfiguration.getCustomerRetrievalRate();
         this.maxTicketCapacity = systemConfiguration.getMaxTicketCapacity();
         return this;
+    }
 
-    //getters and setters
-
+    // Getters and setters
     public int getTotalTickets() {
         return totalTickets;
     }
@@ -139,6 +138,10 @@ public class SystemConfiguration implements Serializable {
         this.customerRetrievalRate = customerRetrievalRate;
     }
 
+    public int getMaxTicketCapacity() {
+        return maxTicketCapacity;
+    }
+
     public void setMaxTicketCapacity(int maxTicketCapacity) {
         this.maxTicketCapacity = maxTicketCapacity;
     }
@@ -150,7 +153,7 @@ public class SystemConfiguration implements Serializable {
 
     public void setRunning(boolean running) {
         this.running = running;
-
+    }
 
     @Override
     public String toString() {

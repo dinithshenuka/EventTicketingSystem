@@ -1,4 +1,3 @@
-// src/main/java/lk/ac/iit/EventTicketingSystem/EventTicketingSystemApplication.java
 package lk.ac.iit.EventTicketingSystem;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +14,7 @@ public class EventTicketingSystemApplication implements CommandLineRunner {
 	private SystemConfiguration systemConfiguration;
 
 	public static void main(String[] args) {
-
-		SystemConfiguration systemConfiguration = new SystemConfiguration();
-		SystemConfiguration.getConfigInputs(systemConfiguration);
-
-        try {
-            SystemConfiguration.saveConfiguration(systemConfiguration,"Configuration.json");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        SpringApplication.run(EventTicketingSystemApplication.class, args);
+		SpringApplication.run(EventTicketingSystemApplication.class, args);
 	}
 
 	@Override
