@@ -5,25 +5,20 @@ import { AdminComponent } from './admin.component';
 import { TicketService } from '../../service/ticket.service';
 import { VendorService } from '../../service/vendor.service';
 import { AdminService } from '../../service/admin.service';
-import { WebSocketService } from '../../service/web-socket.service';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 
 describe('AdminComponent', () => {
   let component: AdminComponent;
   let fixture: ComponentFixture<AdminComponent>;
-  let messageSubject: Subject<string>;
 
   beforeEach(async () => {
-    messageSubject = new Subject<string>();
-
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule],
       declarations: [AdminComponent],
       providers: [
         { provide: TicketService, useValue: { getAllTickets: () => of([]) } },
         { provide: VendorService, useValue: { getAllVendors: () => of([]) } },
-        { provide: AdminService, useValue: {} },
-        { provide: WebSocketService, useValue: { getMessages: () => messageSubject.asObservable() } }
+        { provide: AdminService, useValue: {} }
       ]
     }).compileComponents();
 
@@ -34,17 +29,5 @@ describe('AdminComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should handle WebSocket TICKET_UPDATE message', () => {
-    spyOn(component, 'fetchTickets');
-    messageSubject.next(JSON.stringify({ type: 'TICKET_UPDATE' }));
-    expect(component.fetchTickets).toHaveBeenCalled();
-  });
-
-  it('should handle WebSocket VENDOR_UPDATE message', () => {
-    spyOn(component, 'fetchVendors');
-    messageSubject.next(JSON.stringify({ type: 'VENDOR_UPDATE' }));
-    expect(component.fetchVendors).toHaveBeenCalled();
   });
 });

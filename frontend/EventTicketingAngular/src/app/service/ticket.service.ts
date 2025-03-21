@@ -15,6 +15,7 @@ export class TicketService {
   // Get all tickets (Database and pool)
   public getAllTickets(): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(`${this.apiUrl}all`);
+  }
 
   // Get ticket by id
   public getTicketById(ticketId: number): Observable<Ticket> {
@@ -59,7 +60,7 @@ export class TicketService {
   // buy ticket by event id 
   public buyTicket(eventId: number, buyTicketDTO: BuyTicketDTO): Observable<Ticket> {
     return this.http.put<Ticket>(`${this.apiUrl}buy/${eventId}`, buyTicketDTO);
-}
+  }
 
   // delete ticket
   public deleteTicket(ticketId: number): Observable<void> {

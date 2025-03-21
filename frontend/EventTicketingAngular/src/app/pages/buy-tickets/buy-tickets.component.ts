@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy, inject, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TicketService } from '../../service/ticket.service';
 import { EventService } from '../../service/event.service';
 import { BuyTicketDTO } from '../../model/model';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Subject, interval } from 'rxjs';
+import { Subject, interval, Subscription } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -16,7 +16,6 @@ import { takeUntil, switchMap } from 'rxjs/operators';
   styleUrls: ['./buy-tickets.component.css']
 })
 export class BuyTicketsComponent implements OnInit, OnDestroy {
-
   private destroy$ = new Subject<void>();
   private readonly platformId = inject(PLATFORM_ID);
   
@@ -29,15 +28,14 @@ export class BuyTicketsComponent implements OnInit, OnDestroy {
   errorMessage: string = '';
   eventId!: number;
   availableTickets: number = 0;
-  private wsSubscription!: Subscription;
-
+  
   constructor(
     private fb: FormBuilder,
     private ticketService: TicketService,
     private eventService: EventService,
     private route: ActivatedRoute,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.eventId = this.route.snapshot.params['eventid'];
@@ -58,20 +56,6 @@ export class BuyTicketsComponent implements OnInit, OnDestroy {
     });
 
     this.fetchTicketCount();
-
-    // Subscribe to WebSocket updates
-    this.wsSubscription = this.webSocketService.getMessages().subscribe((message: string) => {
-      const parsedMessage = JSON.parse(message);
-      if (parsedMessage.type === 'TICKET_UPDATE' && parsedMessage.eventId === this.eventId) {
-        this.fetchTicketCount();
-      }
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.wsSubscription) {
-      this.wsSubscription.unsubscribe();
-    }
   }
 
   fetchTicketCount(): void {
@@ -105,10 +89,8 @@ export class BuyTicketsComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.ticketForm.invalid || this.isProcessing) return;
-
     this.isProcessing = true;
     this.errorMessage = '';
-
     const buyTicketData: BuyTicketDTO = {
       customer: {
         customerId: 0, // backend thing
@@ -119,7 +101,6 @@ export class BuyTicketsComponent implements OnInit, OnDestroy {
       },
       ticketCount: this.ticketForm.value.quantity
     };
-
     this.ticketService.buyTicket(this.eventId, buyTicketData).subscribe({
       next: (response) => {
         this.isProcessing = false;
