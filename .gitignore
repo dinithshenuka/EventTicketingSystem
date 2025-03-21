@@ -2,3 +2,5 @@
 backend/EventTicketingSystem/Configuration.json
 *.json
 *.DS_Store
+.DS_Store
+.DS_Store
